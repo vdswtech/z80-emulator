@@ -2,6 +2,18 @@
 
 Z80::Z80()
 {
+	a = (std::uint8_t*) &general_purpose_registers;
+	f = (std::uint8_t*) general_purpose_registers + 1;
+	b = (std::uint8_t*) general_purpose_registers + 2;
+	c = (std::uint8_t*) general_purpose_registers + 3;
+	d = (std::uint8_t*) general_purpose_registers + 4;
+	e = (std::uint8_t*) general_purpose_registers + 5;
+	h = (std::uint8_t*) general_purpose_registers + 6;
+	l = (std::uint8_t*) general_purpose_registers + 7;
+	af = (std::uint16_t*) &general_purpose_registers;
+	bc = (std::uint16_t*) &general_purpose_registers + 2;
+	de = (std::uint16_t*) &general_purpose_registers + 4;
+	hl = (std::uint16_t*) &general_purpose_registers + 6;
 }
 
 Z80::~Z80()

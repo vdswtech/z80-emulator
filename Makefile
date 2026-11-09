@@ -4,13 +4,16 @@ TEST_CFLAGS=-g
 LDFLAGS=
 TEST_LDFLAGS=-lgtest -lgtest_main -lpthread
 
-emulator: object/main.o
+emulator: object/z80.o object/main.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 test_emulator: object/test_memory.o object/test_z80_def.o object/test_z80.o object/test_main.o
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) $^ $(LDFLAGS)$(TEST_LDFLAGS) -o $@
 
 object/main.o: src/main.cpp
+	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
+
+object/z80.o: src/z80.cpp
 	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
 
 object/test_main.o: src/test/main.cpp
