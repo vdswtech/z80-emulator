@@ -1,0 +1,5 @@
+CC=g++
+CFLAGS=-std=c23 -Wall -Wextra
+TEST_CFLAGS=-g
+LDFLAGS=
+TEST_LDFLAGS=
