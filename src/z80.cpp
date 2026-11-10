@@ -2,6 +2,13 @@
 
 Z80::Z80()
 {
+	// CPU Control
+	pc = 0;
+	sp = 0;
+	flags.reset();
+	running = false;
+
+	// Registers
 	a = (std::uint8_t*) &general_purpose_registers;
 	f = (std::uint8_t*) general_purpose_registers + 1;
 	b = (std::uint8_t*) general_purpose_registers + 2;
@@ -18,4 +25,29 @@ Z80::Z80()
 
 Z80::~Z80()
 {
+}
+
+void Z80::read_instruction()
+{
+}
+
+void Z80::execute()
+{
+}
+
+void Z80::step()
+{
+}
+
+void Z80::reset()
+{
+	pc = 0;
+	sp = 0;
+	flags.reset();
+	running = false;
+}
+
+uint8_t Z80::get_gp_register_state(register_pos position)
+{
+	return general_purpose_registers[position];
 }
