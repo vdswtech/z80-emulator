@@ -43,6 +43,8 @@ void Z80::reset()
 	pc = 0;
 	sp = 0;
 	running = false;
+	for (uint8_t i=0; i<16; i++)
+		general_purpose_registers[i] = 0;
 }
 
 uint8_t Z80::get_gp_register_state(register_pos position)
