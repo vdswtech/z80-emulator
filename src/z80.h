@@ -42,12 +42,12 @@ class Z80
 		bool running;                                  // Is system running?
 
 		// general purpose registers
-		std::uint8_t* a {};
+		std::uint8_t* a {}; // Accumulator
 		std::uint8_t* b {};
 		std::uint8_t* c {};
 		std::uint8_t* d {};
 		std::uint8_t* e {};
-		std::uint8_t* f {};
+		std::uint8_t* f {}; // Flags
 		std::uint8_t* h {};
 		std::uint8_t* l {};
 		std::uint16_t* af {};
@@ -56,12 +56,12 @@ class Z80
 		std::uint16_t* hl {};
 
 		// special purpose registers
-		std::uint8_t i {};
-		std::uint8_t r {};
-		std::uint16_t ix {};
-		std::uint16_t iy {};
-		std::uint16_t sp {};
-		std::uint16_t pc {};
+		std::uint8_t i {};   // Interrupt page register
+		std::uint8_t r {};   // Memory refresh gegister
+		std::uint16_t ix {}; // Index X register
+		std::uint16_t iy {}; // Index Y register
+		std::uint16_t sp {}; // Stack Pointer
+		std::uint16_t pc {}; // Program Counter
 	public:
 		Z80();
 		~Z80();
