@@ -5,7 +5,6 @@ Z80::Z80()
 	// CPU Control
 	pc = 0;
 	sp = 0;
-	flags.reset();
 	running = false;
 
 	// Registers
@@ -43,7 +42,6 @@ void Z80::reset()
 {
 	pc = 0;
 	sp = 0;
-	flags.reset();
 	running = false;
 }
 

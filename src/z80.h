@@ -5,6 +5,9 @@
 #include <cstdint>
 #include <string>
 
+enum register_pos {a, b, c, d, e, f, h, l, a_prime, b_prime, c_prime, d_prime, e_prime, f_prime, h_prime, l_prime}; // Register location in register array
+enum flag_pos {sign=7, zero=6, hcarry=4, pv=2, n=1, carry=0};                                                       // flag bit
+
 class Z80
 {
 	private:
@@ -32,15 +35,9 @@ class Z80
 		 */
 
 		// CPU state
-		std::uint16_t pc;                              // Program Counter
-		std::uint16_t sp;                              // Stack Pointer
 		std::uint8_t general_purpose_registers[16] {}; //Registers
-		std::bitset<8> flags;                          // Flags
 		//Memory memory;                                 // System RAM
 		bool running;                                  // Is system running?
-
-		enum register_pos {a, b, c, d, e, f, h, l, a-prime, b-prime, c-prime, d-prime, e-prime, f-prime, h-prime, l-prime}; // Register location in register array
-		enum flag_pos {sign=7, zero=6, hcarry=4, pv=2, n=1, c=0};                                                           // flag bit
 
 		// general purpose registers
 		std::uint8_t* a {};
