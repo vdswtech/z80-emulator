@@ -33,6 +33,17 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	}
 	else if (mnemonic == "INC")
 	{
+		/*
+		 * INC r (8-bit) 0b 00rrr100
+		 * INC (HL)
+		 * INC (IX+d) 0xDD 0x34 dd
+		 * INC (IY+d) 0xFD 0x34 dd
+		 *
+		 * 
+		 * INC rr (16-bit) 0b 00pp0011
+		 * INC IX 0xDD 0x23
+		 * INC IY 0xFD 0x23
+		 */
 
 	}
 	return bytes;
