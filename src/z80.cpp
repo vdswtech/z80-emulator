@@ -27,9 +27,7 @@ Z80::Z80(Memory *memory)
 	hl = (std::uint16_t*) &general_purpose_registers + 6;
 }
 
-Z80::~Z80()
-{
-}
+Z80::~Z80() { }
 
 void Z80::execute()
 {
