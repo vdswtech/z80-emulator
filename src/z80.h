@@ -6,8 +6,35 @@
 
 #include "memory.h"
 
-enum register_pos {a, b, c, d, e, f, h, l, a_prime, b_prime, c_prime, d_prime, e_prime, f_prime, h_prime, l_prime}; // Register location in register array
-enum flag_pos {sign=7, zero=6, hcarry=4, pv=2, n=1, carry=0};                                                       // flag bit
+// Register location in register array
+enum register_pos {
+  a,       // 0
+  f,       // 1
+  b,       // 2
+  c,       // 3
+  d,       // 4
+  e,       // 5
+  h,       // 6
+  l,       // 7
+  a_prime, // 8
+  f_prime, // 9
+  b_prime, // 10
+  c_prime, // 11
+  d_prime, // 12
+  e_prime, // 13
+  h_prime, // 14
+  l_prime  // 15
+};
+
+// flag bit
+enum flag_pos {
+  sign = 7,
+  zero = 6,
+  hcarry = 4,
+  pv = 2,
+  n = 1,
+  carry = 0
+};
 
 class Z80
 {
