@@ -75,11 +75,11 @@ class Z80
 
 		// general purpose registers
 		std::uint8_t* a {}; // Accumulator
+		std::uint8_t* f {}; // Flags
 		std::uint8_t* b {};
 		std::uint8_t* c {};
 		std::uint8_t* d {};
 		std::uint8_t* e {};
-		std::uint8_t* f {}; // Flags
 		std::uint8_t* h {};
 		std::uint8_t* l {};
 		std::uint16_t* af {};
