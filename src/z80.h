@@ -63,7 +63,13 @@ class Z80
 		 */
 
 		// CPU state
-		std::uint8_t general_purpose_registers[16] { 0xFF }; //Registers
+		// Registers
+		std::uint8_t general_purpose_registers[16] {
+			0xFF, 0xFF, 0xFF, 0xFF,
+			0xFF, 0xFF, 0xFF, 0xFF,
+			0xFF, 0xFF, 0xFF, 0xFF,
+			0xFF, 0xFF, 0xFF, 0xFF
+		};
 		Memory* memory;                                 // System RAM
 		bool running { false };                                  // Is system running?
 
