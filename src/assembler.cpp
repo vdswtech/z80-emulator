@@ -40,5 +40,9 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 
 void Assembler::write_all(std::vector<uint8_t> bytes)
 {
-
+	for (auto byte : bytes)
+	{
+		memory.write8(mem_ptr, byte);
+		mem_ptr++;
+	}
 }
