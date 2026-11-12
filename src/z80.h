@@ -37,7 +37,7 @@ class Z80
 
 		// CPU state
 		std::uint8_t general_purpose_registers[16] {}; //Registers
-		Memory memory;                                 // System RAM
+		Memory* memory;                                 // System RAM
 		bool running;                                  // Is system running?
 
 		// general purpose registers
@@ -57,18 +57,21 @@ class Z80
 		// special purpose registers
 		std::uint8_t i {};   // Interrupt page register
 		std::uint8_t r {};   // Memory refresh gegister
+		std::uint8_t ir {};  // Instruction register
 		std::uint16_t ix {}; // Index X register
 		std::uint16_t iy {}; // Index Y register
 		std::uint16_t sp {}; // Stack Pointer
 		std::uint16_t pc {}; // Program Counter
+
+		void execute(); // Execute instruction
 	public:
-		Z80();
+		Z80(Memory* memory);
 		~Z80();
-		void read_instruction();                              // Read instruction from memory
-		void execute();                                       // Execute instruction
 		void step();                                          // Step instruction
 		void reset();                                         // Reset variables
+		bool run_status();                                    // Check if program is running when stepping through a program
 		uint8_t get_gp_register_state(register_pos position); // Get state of general purpose register
+		uint8_t get_ir();                                     // Get current loaded instruction
 		uint16_t get_pc();
 		uint16_t get_sp();
 		uint16_t get_ix();

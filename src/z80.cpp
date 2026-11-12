@@ -1,9 +1,13 @@
 #include "z80.h"
 #include "memory.h"
+#include <iostream>
 
-Z80::Z80()
+Z80::Z80(Memory *memory)
 {
+	this->memory = memory;
+
 	// CPU Control
+	ir = 0;
 	pc = 0;
 	sp = 65535;
 	running = false;
@@ -27,16 +31,30 @@ Z80::~Z80()
 {
 }
 
-void Z80::read_instruction()
-{
-}
-
 void Z80::execute()
 {
+	// Load instruction and increment program counter
+	ir = memory->read8(pc);
+	pc++;
+
+	if (ir == 0x0) // NOP
+	{
+		return;
+	}
+	if (ir == 0x4C) // Halt
+	{
+		running = false;
+		return;
+	}
 }
 
 void Z80::step()
 {
+	if (pc == 0)
+		running = true;
+	if (running)
+		execute();
+	return;
 }
 
 void Z80::reset()
@@ -50,10 +68,21 @@ void Z80::reset()
 		general_purpose_registers[i] = 0;
 }
 
+bool Z80::run_status()
+{
+	return running;
+}
+
 uint8_t Z80::get_gp_register_state(register_pos position)
 {
 	return general_purpose_registers[position];
 }
+
+uint8_t Z80::get_ir()
+{
+	return ir;
+}
+
 uint16_t Z80::get_pc()
 {
 	return pc;
