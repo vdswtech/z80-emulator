@@ -12,7 +12,7 @@ class ASSEMBLER
 {
 	private:
 		uint16_t mem_ptr;
-		Memory *data;
+		Memory* data;
 		void halt();
 		void push_qq(REG_PAIR reg_pairi);
 		void push_ix();
