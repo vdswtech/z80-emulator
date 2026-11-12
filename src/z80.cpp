@@ -1,10 +1,11 @@
 #include "z80.h"
+#include "memory.h"
 
 Z80::Z80()
 {
 	// CPU Control
 	pc = 0;
-	sp = 0;
+	sp = 65535;
 	running = false;
 
 	// Registers
@@ -42,6 +43,8 @@ void Z80::reset()
 {
 	pc = 0;
 	sp = 0;
+	ix=0;
+	iy=0;
 	running = false;
 	for (uint8_t i=0; i<16; i++)
 		general_purpose_registers[i] = 0;
@@ -50,4 +53,43 @@ void Z80::reset()
 uint8_t Z80::get_gp_register_state(register_pos position)
 {
 	return general_purpose_registers[position];
+}
+uint16_t Z80::get_pc()
+{
+	return pc;
+}
+
+uint16_t Z80::get_sp()
+{
+	return sp;
+}
+
+uint16_t Z80::get_ix()
+{
+	return ix;
+}
+
+uint16_t Z80::get_iy()
+{
+	return iy;
+}
+
+uint16_t Z80::get_af()
+{
+	return *af;
+}
+
+uint16_t Z80::get_bc()
+{
+	return *bc;
+}
+
+uint16_t Z80::get_de()
+{
+	return *de;
+}
+
+uint16_t Z80::get_hl()
+{
+	return *hl;
 }

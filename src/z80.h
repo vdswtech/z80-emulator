@@ -69,6 +69,14 @@ class Z80
 		void step();                                          // Step instruction
 		void reset();                                         // Reset variables
 		uint8_t get_gp_register_state(register_pos position); // Get state of general purpose register
+		uint16_t get_pc();
+		uint16_t get_sp();
+		uint16_t get_ix();
+		uint16_t get_iy();
+		uint16_t get_af();
+		uint16_t get_bc();
+		uint16_t get_de();
+		uint16_t get_hl();
 };
 
 #endif
