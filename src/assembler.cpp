@@ -20,7 +20,22 @@ Assembler::Assembler(Memory *memory)
 
 std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 {
+	std::vector<uint8_t> bytes = {};
+	int end_of_mnemonic = instruction.find(" ");
+	std::string mnemonic = instruction.substr(end_of_mnemonic);
+	if (mnemonic == "NOP")
+	{
+		bytes.push_back(0x0);
+	}
+	else if (mnemonic == "HALT")
+	{
+		bytes.push_back(0x76);
+	}
+	else if (mnemonic == "INC")
+	{
 
+	}
+	return bytes;
 }
 
 void Assembler::write_all(std::vector<uint8_t> bytes)
