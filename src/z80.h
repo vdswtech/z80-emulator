@@ -96,7 +96,7 @@ class Z80
 		~Z80();
 		void step();                                          // Step instruction
 		void reset();                                         // Reset variables
-	  void reset_register_pointers();                       // Reset general purpose register pointers to default
+		void reset_register_pointers();                       // Reset general purpose register pointers to default
 		bool run_status();                                    // Check if program is running when stepping through a program
 		uint8_t get_gp_register_state(register_pos position); // Get state of general purpose register
 		uint8_t get_ir();                                     // Get current loaded instruction
