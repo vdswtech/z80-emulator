@@ -37,10 +37,43 @@ void Z80::execute()
 	ir = memory->read8(pc);
 	pc++;
 
-	if (ir == 0x0) // NOP
+	if (ir == 0x3C) // inc register A
 	{
-		return;
+		*a += 1;
 	}
+
+	if (ir == 0x4) // inc register B
+	{
+		*b += 1;
+	}
+
+	if (ir == 0xC) // inc register C
+	{
+		*c += 1;
+	}
+
+	if (ir == 0x14) // inc register D
+	{
+		*d += 1;
+	}
+
+	if (ir == 0x1C) // inc register E
+	{
+		*e += 1;
+	}
+
+	if (ir == 0x24) // inc register H
+	{
+		*h += 1;
+	}
+
+	if (ir == 0x2C) // inc register L
+	{
+		*l += 1;
+	}
+
+	if (ir == 0x0) { return; } // NOP
+
 	if (ir == 0x4C) // Halt
 	{
 		running = false;
@@ -61,6 +94,7 @@ void Z80::reset()
 {
 	pc = 0;
 	sp = 0;
+	ir = 0;
 	ix=0;
 	iy=0;
 	running = false;

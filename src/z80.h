@@ -8,32 +8,32 @@
 
 // Register location in register array
 enum register_pos {
-  a,       // 0
-  f,       // 1
-  b,       // 2
-  c,       // 3
-  d,       // 4
-  e,       // 5
-  h,       // 6
-  l,       // 7
-  a_prime, // 8
-  f_prime, // 9
-  b_prime, // 10
-  c_prime, // 11
-  d_prime, // 12
-  e_prime, // 13
-  h_prime, // 14
-  l_prime  // 15
+	r_a,       // 0
+	r_f,       // 1
+	r_b,       // 2
+	r_c,       // 3
+	r_d,       // 4
+	r_e,       // 5
+	r_h,       // 6
+	r_l,       // 7
+	r_a_prime, // 8
+	r_f_prime, // 9
+	r_b_prime, // 10
+	r_c_prime, // 11
+	r_d_prime, // 12
+	r_e_prime, // 13
+	r_h_prime, // 14
+	r_l_prime  // 15
 };
 
 // flag bit
 enum flag_pos {
-  sign = 7,
-  zero = 6,
-  hcarry = 4,
-  pv = 2,
-  n = 1,
-  carry = 0
+	sign = 7,
+	zero = 6,
+	hcarry = 4,
+	pv = 2,
+	n = 1,
+	carry = 0
 };
 
 class Z80
