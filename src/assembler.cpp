@@ -23,7 +23,7 @@ std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 {
 	std::vector<std::uint8_t> bytes = {};
 	int end_of_mnemonic = instruction.find(" ");
-	std::string mnemonic = instruction.substr(end_of_mnemonic);
+	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
 	if (mnemonic == "NOP")
 	{
 		bytes.push_back(0x0);
