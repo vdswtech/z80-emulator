@@ -26,41 +26,43 @@ enum register_pos {
 	r_l_prime  // 15
 };
 
-// flag bit
-enum flag_pos {
-	sign = 7,
-	zero = 6,
-	hcarry = 4,
-	pv = 2,
-	n = 1,
-	carry = 0
+struct FLAGS
+{
+	/*
+	 * CPU FLAGS
+	 * +-----+--------+-----------------+
+	 * | Bit | Symbol | Name            |
+	 * +-----+--------+-----------------+
+	 * |  7  |   S    | Sign            |
+	 * +-----+--------+-----------------+
+	 * |  6  |   z    | Zero            |
+	 * +-----+--------+-----------------+
+	 * |  5  |   F5   | UNDOCUMENTED    |
+	 * +-----+--------+-----------------+
+	 * |  4  |   H    | Half Carry      |
+	 * +-----+--------+-----------------+
+	 * |  3  |   F3   | UNDOCUMENTED    |
+	 * +-----+--------+-----------------+
+	 * |  2  |   P/V  | Parity/Overflow |
+	 * +-----+--------+-----------------+
+	 * |  1  |   N    | Add/Subtract    |
+	 * +-----+--------+-----------------+
+	 * |  0  |   C    | Carry           |
+	 * +-----+--------+-----------------+
+	 */
+
+	uint8_t sign      = 0x80;
+	uint8_t zero      = 0x40;
+	uint8_t halfcarry = 0x10;
+	uint8_t pv        = 0x4;
+	uint8_t addsub    = 0x2;
+	uint8_t carry     = 0x1;
 };
 
 class Z80
 {
 	private:
-		/*
-		 * CPU FLAGS
-		 * +-----+--------+-----------------+
-		 * | Bit | Symbol | Name            |
-		 * +-----+--------+-----------------+
-		 * |  7  |   S    | Sign            |
-		 * +-----+--------+-----------------+
-		 * |  6  |   z    | Zero            |
-		 * +-----+--------+-----------------+
-		 * |  5  |   F5   | UNDOCUMENTED    |
-		 * +-----+--------+-----------------+
-		 * |  4  |   H    | Half Carry      |
-		 * +-----+--------+-----------------+
-		 * |  3  |   F3   | UNDOCUMENTED    |
-		 * +-----+--------+-----------------+
-		 * |  2  |   P/V  | Parity/Overflow |
-		 * +-----+--------+-----------------+
-		 * |  1  |   N    | Add/Subtract    |
-		 * +-----+--------+-----------------+
-		 * |  0  |   C    | Carry           |
-		 * +-----+--------+-----------------+
-		 */
+		FLAGS flag_bits; // Hex values for switching bit in f register
 
 		// CPU state
 		std::uint8_t general_purpose_registers[16] {}; //Registers
