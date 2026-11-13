@@ -1,4 +1,5 @@
 #include "assembler.h"
+#include <unordered_map>
 
 std::unordered_map<std::string, std::uint8_t> REGISTER_TO_ID = 
 {
@@ -18,9 +19,9 @@ Assembler::Assembler(Memory *memory)
 	this->memory = memory;
 }
 
-std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
+std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 {
-	std::vector<uint8_t> bytes = {};
+	std::vector<std::uint8_t> bytes = {};
 	int end_of_mnemonic = instruction.find(" ");
 	std::string mnemonic = instruction.substr(end_of_mnemonic);
 	if (mnemonic == "NOP")
@@ -49,11 +50,11 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	return bytes;
 }
 
-void Assembler::write_all(std::vector<uint8_t> bytes)
+void Assembler::write_all(std::vector<std::uint8_t> bytes)
 {
 	for (auto byte : bytes)
 	{
-		memory.write8(mem_ptr, byte);
+		memory->write8(mem_ptr, byte);
 		mem_ptr++;
 	}
 }
