@@ -7,7 +7,7 @@ TEST_LDFLAGS=-lgtest -lgtest_main -lpthread
 emulator: object/memory.o object/z80.o object/main.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
-test_emulator: object/test_memory_def.o object/test_memory.o object/test_z80_def.o object/test_z80.o object/test_main.o
+test_emulator: object/test_memory.o object/test_memory_def.o object/test_z80.o object/test_z80_def.o object/test_main.o
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) $^ $(LDFLAGS)$(TEST_LDFLAGS) -o $@
 
 object/main.o: src/main.cpp
@@ -23,13 +23,13 @@ object/test_main.o: src/test/main.cpp
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS) $(TEST_LDFLAGS) -o $@
 
 object/test_memory_def.o: src/memory.cpp
-	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $(TEST_CLFAGS) -c $^ $(LDFLAGS) -o $@
 
 object/test_memory.o: src/test/memory.cpp
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS) $(TEST_LDFLAGS) -o $@
 
 object/test_z80_def.o: src/z80.cpp
-	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $(TEST_CLFAGS) -c $^ $(LDFLAGS) -o $@
 
 object/test_z80.o: src/test/z80.cpp
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS)$(TEST_LDFLAGS) -o $@
