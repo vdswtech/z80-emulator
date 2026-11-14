@@ -66,7 +66,7 @@ class Z80
 
 		// CPU state
 		// Registers
-		std::uint8_t general_purpose_registers[16] {
+		uint8_t general_purpose_registers[16] {
 			0xFF, 0xFF, 0xFF, 0xFF,
 			0xFF, 0xFF, 0xFF, 0xFF,
 			0xFF, 0xFF, 0xFF, 0xFF,
@@ -76,27 +76,27 @@ class Z80
 		bool running { false };                                  // Is system running?
 
 		// general purpose registers
-		std::uint8_t* a {}; // Accumulator
-		std::uint8_t* f {}; // Flags
-		std::uint8_t* b {};
-		std::uint8_t* c {};
-		std::uint8_t* d {};
-		std::uint8_t* e {};
-		std::uint8_t* h {};
-		std::uint8_t* l {};
-		std::uint16_t* af {};
-		std::uint16_t* bc {};
-		std::uint16_t* de {};
-		std::uint16_t* hl {};
+		uint8_t* a {}; // Accumulator
+		uint8_t* f {}; // Flags
+		uint8_t* b {};
+		uint8_t* c {};
+		uint8_t* d {};
+		uint8_t* e {};
+		uint8_t* h {};
+		uint8_t* l {};
+		uint16_t* af {};
+		uint16_t* bc {};
+		uint16_t* de {};
+		uint16_t* hl {};
 
 		// special purpose registers
-		std::uint8_t i { 0xFF };   // Interrupt page register
-		std::uint8_t r { 0xFF };   // Memory refresh gegister
-		std::uint8_t ir {};  // Instruction register
-		std::uint16_t ix { 0xFFFF }; // Index X register
-		std::uint16_t iy { 0xFFFF }; // Index Y register
-		std::uint16_t sp { 0xFFFF }; // Stack Pointer
-		std::uint16_t pc {}; // Program Counter
+		uint8_t i { 0xFF };   // Interrupt page register
+		uint8_t r { 0xFF };   // Memory refresh gegister
+		uint8_t ir {};  // Instruction register
+		uint16_t ix { 0xFFFF }; // Index X register
+		uint16_t iy { 0xFFFF }; // Index Y register
+		uint16_t sp { 0xFFFF }; // Stack Pointer
+		uint16_t pc {}; // Program Counter
 
 		void execute(); // Execute instruction
 	public:
