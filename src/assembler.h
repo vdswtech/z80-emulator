@@ -1,7 +1,7 @@
 #ifndef __ASSEMBLER_H__
 #define __ASSEMBLER_H__
 
-#include <stdint>
+#include <cstdint>
 #include <string>
 #include "memory.h"
 
