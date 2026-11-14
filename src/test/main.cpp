@@ -1,3 +1,4 @@
+#include "assembler.h"
 #include "memory.h"
 #include "z80.h"
 

@@ -13,35 +13,35 @@ test_emulator: object/test_memory_def.o object/test_memory.o object/test_assembl
 object/main.o: src/main.cpp
 	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
 
+object/assembler.o: src/assembler.cpp
+	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
+
 object/z80.o: src/z80.cpp
 	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
 
 object/memory.o: src/memory.cpp
 	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
 
-object/assembler.o: src/assembler.cpp
-	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
-
 object/test_main.o: src/test/main.cpp
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS) $(TEST_LDFLAGS) -o $@
 
+object/test_assembler_def.o: src/assembler.cpp
+	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS) -o $@
+
+object/test_assembler.o: src/test/assembler.cpp
+	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS) $(TEST_LDFLAGS) -o $@
+
 object/test_memory_def.o: src/memory.cpp
-	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $(TEST_CLFAGS) -c $^ $(LDFLAGS) -o $@
 
 object/test_memory.o: src/test/memory.cpp
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS) $(TEST_LDFLAGS) -o $@
 
 object/test_z80_def.o: src/z80.cpp
-	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $(TEST_CLFAGS) -c $^ $(LDFLAGS) -o $@
 
 object/test_z80.o: src/test/z80.cpp
 	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS)$(TEST_LDFLAGS) -o $@
-
-object/test_assembler_def.o: src/assembler.cpp
-	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
-
-object/test_assembler.o: src/test/assembler.cpp
-	$(CC) $(CFLAGS) $(TEST_CFLAGS) -c $^ $(LDFLAGS) $(TEST_LDFLAGS) -o $@
 
 .PHONY: clean
 clean:

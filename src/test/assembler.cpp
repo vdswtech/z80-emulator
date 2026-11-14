@@ -1,6 +1,5 @@
 #include "assembler.h"
 #include <cstdint>
-#include <gtest/gtest.h>
 #include <vector>
 
 std::vector<uint8_t> make_vec_1(uint8_t a)

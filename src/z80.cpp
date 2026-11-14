@@ -5,31 +5,10 @@
 Z80::Z80(Memory *memory)
 {
 	this->memory = memory;
-
-	// CPU Control
-	ir = 0;
-	pc = 0;
-	sp = 65535;
-	running = false;
-
-	// Registers
-	a = (std::uint8_t*) &general_purpose_registers;
-	f = (std::uint8_t*) general_purpose_registers + 1;
-	b = (std::uint8_t*) general_purpose_registers + 2;
-	c = (std::uint8_t*) general_purpose_registers + 3;
-	d = (std::uint8_t*) general_purpose_registers + 4;
-	e = (std::uint8_t*) general_purpose_registers + 5;
-	h = (std::uint8_t*) general_purpose_registers + 6;
-	l = (std::uint8_t*) general_purpose_registers + 7;
-	af = (std::uint16_t*) &general_purpose_registers;
-	bc = (std::uint16_t*) &general_purpose_registers + 2;
-	de = (std::uint16_t*) &general_purpose_registers + 4;
-	hl = (std::uint16_t*) &general_purpose_registers + 6;
+	reset_register_pointers();
 }
 
-Z80::~Z80()
-{
-}
+Z80::~Z80() { }
 
 void Z80::execute()
 {
@@ -37,10 +16,43 @@ void Z80::execute()
 	ir = memory->read8(pc);
 	pc++;
 
-	if (ir == 0x0) // NOP
+	if (ir == 0x3C) // inc register A
 	{
-		return;
+		*a += 1;
 	}
+
+	if (ir == 0x4) // inc register B
+	{
+		*b += 1;
+	}
+
+	if (ir == 0xC) // inc register C
+	{
+		*c += 1;
+	}
+
+	if (ir == 0x14) // inc register D
+	{
+		*d += 1;
+	}
+
+	if (ir == 0x1C) // inc register E
+	{
+		*e += 1;
+	}
+
+	if (ir == 0x24) // inc register H
+	{
+		*h += 1;
+	}
+
+	if (ir == 0x2C) // inc register L
+	{
+		*l += 1;
+	}
+
+	if (ir == 0x0) { return; } // NOP
+
 	if (ir == 0x4C) // Halt
 	{
 		running = false;
@@ -59,13 +71,38 @@ void Z80::step()
 
 void Z80::reset()
 {
-	pc = 0;
-	sp = 0;
-	ix=0;
-	iy=0;
 	running = false;
-	for (uint8_t i=0; i<16; i++)
-		general_purpose_registers[i] = 0;
+
+	// Special Purpose Registers
+	i = 0xFF;
+	r = 0xFF;
+	pc = 0;
+	sp = 0xFFFF;
+	ix = 0xFFFF;
+	iy = 0xFFFF;
+
+	// General Purpose Registers
+	for (std::uint8_t i = 0; i < 16; i++)
+	{
+		general_purpose_registers[i] = 0xFF;
+	}
+	reset_register_pointers();
+}
+
+void Z80::reset_register_pointers()
+{
+	a = (std::uint8_t*) &general_purpose_registers;
+	f = (std::uint8_t*) &general_purpose_registers + 1;
+	b = (std::uint8_t*) &general_purpose_registers + 2;
+	c = (std::uint8_t*) &general_purpose_registers + 3;
+	d = (std::uint8_t*) &general_purpose_registers + 4;
+	e = (std::uint8_t*) &general_purpose_registers + 5;
+	h = (std::uint8_t*) &general_purpose_registers + 6;
+	l = (std::uint8_t*) &general_purpose_registers + 7;
+	af = (std::uint16_t*) &general_purpose_registers;
+	bc = (std::uint16_t*) &general_purpose_registers + 2;
+	de = (std::uint16_t*) &general_purpose_registers + 4;
+	hl = (std::uint16_t*) &general_purpose_registers + 6;
 }
 
 bool Z80::run_status()

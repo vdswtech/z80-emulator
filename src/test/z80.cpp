@@ -6,34 +6,34 @@ Z80 z80(&mem);
 
 TEST (REGISTERS, general_purpose)
 {
-	EXPECT_EQ(z80.get_gp_register_state(a), 0);
-	EXPECT_EQ(z80.get_gp_register_state(b), 0);
-	EXPECT_EQ(z80.get_gp_register_state(c), 0);
-	EXPECT_EQ(z80.get_gp_register_state(d), 0);
-	EXPECT_EQ(z80.get_gp_register_state(e), 0);
-	EXPECT_EQ(z80.get_gp_register_state(f), 0);
-	EXPECT_EQ(z80.get_gp_register_state(h), 0);
-	EXPECT_EQ(z80.get_gp_register_state(l), 0);
-	EXPECT_EQ(z80.get_gp_register_state(a_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(b_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(c_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(d_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(e_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(f_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(h_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(l_prime), 0);
-	EXPECT_EQ(z80.get_af(), 0);
-	EXPECT_EQ(z80.get_bc(), 0);
-	EXPECT_EQ(z80.get_de(), 0);
-	EXPECT_EQ(z80.get_hl(), 0);
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_c), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_d), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_e), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_f), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_h), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_l), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_a_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_b_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_c_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_d_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_e_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_f_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_h_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_l_prime), 0xFF);
+	EXPECT_EQ(z80.get_af(), 0xFFFF);
+	EXPECT_EQ(z80.get_bc(), 0xFFFF);
+	EXPECT_EQ(z80.get_de(), 0xFFFF);
+	EXPECT_EQ(z80.get_hl(), 0xFFFF);
 }
 
 TEST(REGISTERS, special_purpose)
 {
 	EXPECT_EQ(z80.get_pc(), 0);
-	EXPECT_EQ(z80.get_sp(), 65535);
-	EXPECT_EQ(z80.get_ix(), 0);
-	EXPECT_EQ(z80.get_iy(), 0);
+	EXPECT_EQ(z80.get_sp(), 0xFFFF);
+	EXPECT_EQ(z80.get_ix(), 0xFFFF);
+	EXPECT_EQ(z80.get_iy(), 0xFFFF);
 }
 
 TEST(PROGRAM, nop_and_halt)
@@ -45,8 +45,6 @@ TEST(PROGRAM, nop_and_halt)
 	 */
 	mem.write8(0, 0);
 	mem.write8(0x1, 0x4C);
-	EXPECT_EQ(mem.read8(0x0), 0);
-	EXPECT_EQ(mem.read8(0x1), 0x4C);
 	EXPECT_EQ(z80.get_pc(), 0);
 	EXPECT_FALSE(z80.run_status());
 	z80.step();
@@ -57,4 +55,55 @@ TEST(PROGRAM, nop_and_halt)
 	EXPECT_FALSE(z80.run_status());
 	EXPECT_EQ(z80.get_ir(), 0x4C);
 	EXPECT_EQ(z80.get_pc(), 2);
+}
+
+TEST(PROGRAM, increment_register)
+{
+	/*
+	 * Read a register
+	 * Check it's value before and after incrementing
+	 */
+	mem.write8(0x0, 0x3C); // Increment 'a'
+	mem.write8(0x1, 0x4);  // Increment 'b'
+	mem.write8(0x2, 0xC);  // Increment 'c'
+	mem.write8(0x3, 0x14); // Increment 'd'
+	mem.write8(0x4, 0x1C); // Increment 'e'
+	mem.write8(0x5, 0x24); // Increment 'h'
+	mem.write8(0x6, 0x2C); // Increment 'l'
+	mem.write8(0x7, 0x4C); // halt
+	EXPECT_EQ(mem.read8(0x0), 0x3C);
+	EXPECT_EQ(mem.read8(0x1), 0x4);
+	EXPECT_EQ(mem.read8(0x2), 0xC);
+	EXPECT_EQ(mem.read8(0x3), 0x14);
+	EXPECT_EQ(mem.read8(0x4), 0x1C);
+	EXPECT_EQ(mem.read8(0x5), 0x24);
+	EXPECT_EQ(mem.read8(0x6), 0x2C);
+	EXPECT_EQ(mem.read8(0x7), 0x4C);
+
+	z80.reset(); // reset from previous test
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_c), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_d), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_e), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_h), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_l), 0xFF);
+
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x0);
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0x0);
+	EXPECT_EQ(z80.get_gp_register_state(r_c), 0x0);
+	EXPECT_EQ(z80.get_gp_register_state(r_d), 0x0);
+	EXPECT_EQ(z80.get_gp_register_state(r_e), 0x0);
+	EXPECT_EQ(z80.get_gp_register_state(r_h), 0x0);
+	EXPECT_EQ(z80.get_gp_register_state(r_l), 0x0);
 }

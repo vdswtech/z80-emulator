@@ -1,6 +1,5 @@
 #include "memory.h"
 
-
 TEST(MemoryTest, initially0)
 {
 	Memory memory;
