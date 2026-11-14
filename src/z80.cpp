@@ -12,6 +12,18 @@ Z80::~Z80() { }
 
 void Z80::execute()
 {
+	/*
+	 * 01rrrsss: ld r, s
+	 * 00rrr110 nnnnnnnn: ld r, n
+	 * 0xDD 01rrr110 dddddddd: ld r, (IX+d)
+	 * 0xFD 01rrr110 dddddddd: ld r, (IY+d)
+	 * 0xDD 01110rrr dddddddd: ld (IX+d), r
+	 * 0xFD 01110rrr dddddddd: ld (IY+d), r
+	 * 0xDD 01110110 dddddddd nnnnnnnn: ld (IX+d), n
+	 * 0xFD 01110110 dddddddd nnnnnnnn: ld (IY+d), n
+	 * 00rrr100: inc r
+	 * 00rrr101: dec r
+	 */
 	// Load instruction and increment program counter
 	ir = memory->read8(pc);
 	pc++;
