@@ -12,9 +12,10 @@ class Memory
 	public:
 		Memory();
 		~Memory();
-		void write8(std::uint16_t address, std::uint8_t value);
-		void write16(std::uint16_t address, std::uint16_t value);
-		std::uint8_t read8(std::uint16_t address);
-		std::uint16_t read16(std::uint16_t address);
+		void write8(uint16_t address, uint8_t value);
+		void write16(uint16_t address, uint16_t value);
+		uint8_t read8(uint16_t address);
+		uint16_t read16(uint16_t address);
+		uint8_t* pointerto8(uint16_t address);
 };
-#endif 
+#endif

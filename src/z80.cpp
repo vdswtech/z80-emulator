@@ -171,3 +171,8 @@ uint16_t Z80::get_hl()
 {
 	return *hl;
 }
+
+uint8_t* Z80::get_hl_indirect()
+{
+	return memory->pointerto8(*hl);
+}

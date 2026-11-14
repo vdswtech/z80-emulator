@@ -98,6 +98,7 @@ class Z80
 		std::uint16_t sp { 0xFFFF }; // Stack Pointer
 		std::uint16_t pc {}; // Program Counter
 
+
 		void execute(); // Execute instruction
 	public:
 		Z80(Memory* memory);
@@ -116,6 +117,7 @@ class Z80
 		uint16_t get_bc();
 		uint16_t get_de();
 		uint16_t get_hl();
+		uint8_t* get_hl_indirect();
 };
 
 #endif

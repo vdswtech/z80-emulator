@@ -24,3 +24,8 @@ std::uint16_t Memory::read16(std::uint16_t address)
 	std::uint8_t high = bytes[address + 1];
 	return static_cast<uint16_t>(high) << 8 | static_cast<uint16_t>(low);
 }
+
+uint8_t* Memory::pointerto8(uint16_t address)
+{
+    return &bytes[address];
+}
