@@ -1,6 +1,6 @@
 #include "z80.h"
 #include "memory.h"
-#include <iostream>
+#include <stdexcept>
 
 Z80::Z80(Memory *memory)
 {
@@ -175,4 +175,29 @@ uint16_t Z80::get_hl()
 uint8_t* Z80::get_hl_indirect()
 {
 	return memory->pointerto8(*hl);
+}
+
+uint8_t *Z80::get_reg8_ptr(uint8_t id)
+{
+    switch (id)
+	{
+		case 0:
+			return b;
+		case 1:
+			return c;
+		case 2:
+			return d;
+		case 3:
+			return e;
+		case 4:
+			return h;
+		case 5:
+			return l;
+		case 6:
+			return get_hl_indirect();
+		case 7:
+			return a;
+		default:
+			throw std::invalid_argument("Register ID cannot be greater than 7.");
+	}
 }
