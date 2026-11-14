@@ -6,34 +6,34 @@ Z80 z80(&mem);
 
 TEST (REGISTERS, general_purpose)
 {
-	EXPECT_EQ(z80.get_gp_register_state(r_a), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_b), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_c), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_d), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_e), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_f), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_h), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_l), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_a_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_b_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_c_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_d_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_e_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_f_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_h_prime), 0);
-	EXPECT_EQ(z80.get_gp_register_state(r_l_prime), 0);
-	EXPECT_EQ(z80.get_af(), 0);
-	EXPECT_EQ(z80.get_bc(), 0);
-	EXPECT_EQ(z80.get_de(), 0);
-	EXPECT_EQ(z80.get_hl(), 0);
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_c), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_d), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_e), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_f), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_h), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_l), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_a_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_b_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_c_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_d_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_e_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_f_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_h_prime), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_l_prime), 0xFF);
+	EXPECT_EQ(z80.get_af(), 0xFFFF);
+	EXPECT_EQ(z80.get_bc(), 0xFFFF);
+	EXPECT_EQ(z80.get_de(), 0xFFFF);
+	EXPECT_EQ(z80.get_hl(), 0xFFFF);
 }
 
 TEST(REGISTERS, special_purpose)
 {
 	EXPECT_EQ(z80.get_pc(), 0);
-	EXPECT_EQ(z80.get_sp(), 65535);
-	EXPECT_EQ(z80.get_ix(), 0);
-	EXPECT_EQ(z80.get_iy(), 0);
+	EXPECT_EQ(z80.get_sp(), 0xFFFF);
+	EXPECT_EQ(z80.get_ix(), 0xFFFF);
+	EXPECT_EQ(z80.get_iy(), 0xFFFF);
 }
 
 TEST(PROGRAM, nop_and_halt)
@@ -81,8 +81,25 @@ TEST(PROGRAM, increment_register)
 	EXPECT_EQ(mem.read8(0x5), 0x24);
 	EXPECT_EQ(mem.read8(0x6), 0x2C);
 	EXPECT_EQ(mem.read8(0x7), 0x4C);
-	
+
 	z80.reset(); // reset from previous test
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_c), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_d), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_e), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_h), 0xFF);
+	EXPECT_EQ(z80.get_gp_register_state(r_l), 0xFF);
+
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
+	z80.step();
 
 	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x0);
 	EXPECT_EQ(z80.get_gp_register_state(r_b), 0x0);
@@ -91,21 +108,4 @@ TEST(PROGRAM, increment_register)
 	EXPECT_EQ(z80.get_gp_register_state(r_e), 0x0);
 	EXPECT_EQ(z80.get_gp_register_state(r_h), 0x0);
 	EXPECT_EQ(z80.get_gp_register_state(r_l), 0x0);
-
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-
-	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x1);
-	EXPECT_EQ(z80.get_gp_register_state(r_b), 0x1);
-	EXPECT_EQ(z80.get_gp_register_state(r_c), 0x1);
-	EXPECT_EQ(z80.get_gp_register_state(r_d), 0x1);
-	EXPECT_EQ(z80.get_gp_register_state(r_e), 0x1);
-	EXPECT_EQ(z80.get_gp_register_state(r_h), 0x1);
-	EXPECT_EQ(z80.get_gp_register_state(r_l), 0x1);
 }
