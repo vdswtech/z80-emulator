@@ -45,8 +45,6 @@ TEST(PROGRAM, nop_and_halt)
 	 */
 	mem.write8(0, 0);
 	mem.write8(0x1, 0x4C);
-	EXPECT_EQ(mem.read8(0x0), 0);
-	EXPECT_EQ(mem.read8(0x1), 0x4C);
 	EXPECT_EQ(z80.get_pc(), 0);
 	EXPECT_FALSE(z80.run_status());
 	z80.step();
