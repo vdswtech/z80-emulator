@@ -82,6 +82,19 @@ uint8_t reg16_to_id(std::string reg16, Reg16Group group)
 	}
 }
 
+uint8_t get_index_reg_byte(char index_reg)
+{
+	switch (index_reg)
+	{
+		case 'X':
+			return 0xDD;
+		case 'Y':
+			return 0xFD;
+		default:
+			throw std::invalid_argument("Index register must be X or Y");
+	}
+}
+
 Assembler::Assembler(Memory *memory)
 {
 	mem_ptr = 0;
