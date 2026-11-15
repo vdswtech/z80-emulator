@@ -28,6 +28,30 @@ void assert_0_operands(std::string mnemonic, int end_of_mnemonic)
 	}
 }
 
+std::string get_1_operand(std::string mnemonic, int end_of_mnemonic)
+{
+	/*
+	 * inc a
+	 *    ^
+	 *    e
+	 *    o
+	 *    m
+ 	 */
+	if (end_of_mnemonic == mnemonic.npos)
+	{
+		throw std::invalid_argument("expected 1 operand, got 0");
+	}
+
+	int comma_location = mnemonic.find(", ", end_of_mnemonic);
+
+	if (comma_location != mnemonic.npos)
+	{
+		throw std::invalid_argument("expected 1 operand, got 2");
+	}
+
+	return mnemonic.substr(end_of_mnemonic + 1);
+}
+
 std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 {
 	std::vector<std::uint8_t> bytes = {};
