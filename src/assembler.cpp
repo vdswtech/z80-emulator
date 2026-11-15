@@ -14,6 +14,34 @@ std::unordered_map<std::string, std::uint8_t> REG8_TO_ID =
 	{"A", 7}
 };
 
+std::unordered_map<std::string, std::uint8_t> REG16_QQ_TO_ID = {
+	{"BC", 0},
+	{"DE", 1},
+	{"HL", 2},
+	{"AF", 3},
+};
+
+std::unordered_map<std::string, std::uint8_t> REG16_SS_TO_ID = {
+	{"BC", 0},
+	{"DE", 1},
+	{"HL", 2},
+	{"SP", 3},
+};
+
+std::unordered_map<std::string, std::uint8_t> REG16_PP_TO_ID = {
+	{"BC", 0},
+	{"DE", 1},
+	{"IX", 2},
+	{"SP", 3},
+};
+
+std::unordered_map<std::string, std::uint8_t> REG16_RR_TO_ID = {
+	{"BC", 0},
+	{"DE", 1},
+	{"IY", 2},
+	{"SP", 3},
+};
+
 Assembler::Assembler(Memory *memory)
 {
 	mem_ptr = 0;
@@ -76,7 +104,7 @@ std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 		 * INC (IY+d) 0xFD 0x34 dd
 		 *
 		 * 
-		 * INC rr (16-bit) 0b 00pp0011
+		 * INC ss (16-bit) 0b 00ss0011
 		 * INC IX 0xDD 0x23
 		 * INC IY 0xFD 0x23
 		 */
