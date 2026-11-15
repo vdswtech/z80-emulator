@@ -63,7 +63,6 @@ class Z80
 {
 	private:
 		FLAGS flag_bits;        // Hex values for switching bit in f register
-		uint8_t flag_bytes[63]; // Hex value for all variants of flags being enabled
 
 		// CPU state
 		std::uint8_t general_purpose_registers[16]; // register memory location
