@@ -35,7 +35,7 @@ struct FLAGS
 	 * +-----+--------+-----------------+
 	 * |  7  |   S    | Sign            |
 	 * +-----+--------+-----------------+
-	 * |  6  |   z    | Zero            |
+	 * |  6  |   Z    | Zero            |
 	 * +-----+--------+-----------------+
 	 * |  5  |   F5   | UNDOCUMENTED    |
 	 * +-----+--------+-----------------+
@@ -84,15 +84,25 @@ class Z80
 		uint16_t* hl {};
 
 		// special purpose registers
-		uint8_t i { 0xFF };   // Interrupt page register
-		uint8_t r { 0xFF };   // Memory refresh gegister
-		uint8_t ir {};  // Instruction register
+		uint8_t i { 0xFF };     // Interrupt page register
+		uint8_t r { 0xFF };     // Memory refresh gegister
+		uint8_t ir {};          // Instruction register
 		uint16_t ix { 0xFFFF }; // Index X register
 		uint16_t iy { 0xFFFF }; // Index Y register
 		uint16_t sp { 0xFFFF }; // Stack Pointer
-		uint16_t pc {}; // Program Counter
+		uint16_t pc {};         // Program Counter
 
-		void execute(); // Execute instruction
+		void execute();     // Execute instruction
+		bool f_c_is_set();  // Check if Carry flag is set
+		bool f_n_is_set();  // Check if Add/Subtract flag is set
+		bool f_pv_is_set(); // Check if Parity/Overflow flag is set
+		bool f_h_is_set();  // Check if Half Carry flag is set
+		bool f_z_is_set();  // Check if Zero flag is set
+		bool f_s_is_set();  // Check if Sign flag is set
+		
+		//  Execute helper scripts
+		void inc(uint8_t* reg);       // Increment a register
+		void update_f(uint8_t value); // Update Flags register
 	public:
 		Z80(Memory* memory);
 		~Z80();
