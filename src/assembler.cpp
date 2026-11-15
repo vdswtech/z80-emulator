@@ -42,6 +42,46 @@ std::unordered_map<std::string, uint8_t> REG16_RR_TO_ID = {
 	{"SP", 3},
 };
 
+enum class Reg16Group {
+	QQ,
+	SS,
+	PP,
+	RR
+};
+
+uint8_t map_reg_to_id(std::unordered_map<std::string, uint8_t> reg_to_id, std::string reg)
+{
+	auto reg_id_iterator = reg_to_id.find(reg);
+	if (reg_id_iterator != reg_to_id.end())
+	{
+		return reg_id_iterator->second;
+	}
+	else
+	{
+		return 0xFF;
+	}
+}
+
+uint8_t reg8_to_id(std::string reg8)
+{
+	return map_reg_to_id(REG8_TO_ID, reg8);
+}
+
+uint8_t reg16_to_id(std::string reg16, Reg16Group group)
+{
+	switch (group)
+	{
+		case Reg16Group::QQ:
+			return map_reg_to_id(REG16_QQ_TO_ID, reg16);
+		case Reg16Group::SS:
+			return map_reg_to_id(REG16_SS_TO_ID, reg16);
+		case Reg16Group::PP:
+			return map_reg_to_id(REG16_PP_TO_ID, reg16);
+		case Reg16Group::RR:
+			return map_reg_to_id(REG16_RR_TO_ID, reg16);
+	}
+}
+
 Assembler::Assembler(Memory *memory)
 {
 	mem_ptr = 0;
