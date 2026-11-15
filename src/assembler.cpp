@@ -1,7 +1,8 @@
 #include "assembler.h"
+#include <stdexcept>
 #include <unordered_map>
 
-std::unordered_map<std::string, std::uint8_t> REGISTER_TO_ID = 
+std::unordered_map<std::string, std::uint8_t> REG8_TO_ID =
 {
 	{"B", 0},
 	{"C", 1},
@@ -19,6 +20,14 @@ Assembler::Assembler(Memory *memory)
 	this->memory = memory;
 }
 
+void assert_0_operands(std::string mnemonic, int end_of_mnemonic)
+{
+	if (end_of_mnemonic != mnemonic.npos)
+	{
+		throw std::invalid_argument("expected 0 operands, got more than 0");
+	}
+}
+
 std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 {
 	std::vector<std::uint8_t> bytes = {};
@@ -26,10 +35,12 @@ std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
 	if (mnemonic == "NOP")
 	{
+		assert_0_operands(mnemonic, end_of_mnemonic);
 		bytes.push_back(0x0);
 	}
 	else if (mnemonic == "HALT")
 	{
+		assert_0_operands(mnemonic, end_of_mnemonic);
 		bytes.push_back(0x76);
 	}
 	else if (mnemonic == "INC")
