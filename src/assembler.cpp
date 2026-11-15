@@ -101,15 +101,15 @@ Assembler::Assembler(Memory *memory)
 	this->memory = memory;
 }
 
-void assert_0_operands(std::string mnemonic, int end_of_mnemonic)
+void assert_0_operands(std::string instruction, int end_of_mnemonic)
 {
-	if (end_of_mnemonic != mnemonic.npos)
+	if (end_of_mnemonic != instruction.npos)
 	{
 		throw std::invalid_argument("expected 0 operands, got more than 0");
 	}
 }
 
-std::string get_1_operand(std::string mnemonic, int end_of_mnemonic)
+std::string get_1_operand(std::string instruction, int end_of_mnemonic)
 {
 	/*
 	 * inc a
@@ -118,22 +118,22 @@ std::string get_1_operand(std::string mnemonic, int end_of_mnemonic)
 	 *    o
 	 *    m
  	 */
-	if (end_of_mnemonic == mnemonic.npos)
+	if (end_of_mnemonic == instruction.npos)
 	{
 		throw std::invalid_argument("expected 1 operand, got 0");
 	}
 
-	int comma_location = mnemonic.find(", ", end_of_mnemonic);
+	int comma_location = instruction.find(", ", end_of_mnemonic);
 
-	if (comma_location != mnemonic.npos)
+	if (comma_location != instruction.npos)
 	{
 		throw std::invalid_argument("expected 1 operand, got 2");
 	}
 
-	return mnemonic.substr(end_of_mnemonic + 1);
+	return instruction.substr(end_of_mnemonic + 1);
 }
 
-std::pair<std::string, std::string> get_2_operands(std::string mnemonic, int end_of_mnemonic)
+std::pair<std::string, std::string> get_2_operands(std::string instruction, int end_of_mnemonic)
 {
 	/*
 	 * ld a, b
@@ -142,14 +142,14 @@ std::pair<std::string, std::string> get_2_operands(std::string mnemonic, int end
 	 *   o l
 	 *   m
  	 */
-	if (end_of_mnemonic == mnemonic.npos)
+	if (end_of_mnemonic == instruction.npos)
 	{
 		throw std::invalid_argument("expected 2 operands, got 0");
 	}
 
-	int comma_location = mnemonic.find(", ", end_of_mnemonic);
+	int comma_location = instruction.find(", ", end_of_mnemonic);
 
-	if (comma_location == mnemonic.npos)
+	if (comma_location == instruction.npos)
 	{
 		throw std::invalid_argument("expected 2 operands, got 1");
 	}
@@ -157,8 +157,8 @@ std::pair<std::string, std::string> get_2_operands(std::string mnemonic, int end
 	int first_operand_length = comma_location - end_of_mnemonic - 1;
 
 	return std::pair<std::string, std::string>(
-		mnemonic.substr(end_of_mnemonic + 1, first_operand_length),
-		mnemonic.substr(comma_location + 2)
+		instruction.substr(end_of_mnemonic + 1, first_operand_length),
+		instruction.substr(comma_location + 2)
 	);
 }
 
@@ -179,7 +179,7 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	}
 	else if (mnemonic == "INC")
 	{
-		std::string operand = get_1_operand(mnemonic, end_of_mnemonic);
+		std::string operand = get_1_operand(instruction, end_of_mnemonic);
 		// first, handle IX/IY
 		if (operand.rfind("I", 0) == 0)
 		{
