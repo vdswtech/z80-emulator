@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-std::unordered_map<std::string, std::uint8_t> REG8_TO_ID =
+std::unordered_map<std::string, uint8_t> REG8_TO_ID =
 {
 	{"B", 0},
 	{"C", 1},
@@ -14,28 +14,28 @@ std::unordered_map<std::string, std::uint8_t> REG8_TO_ID =
 	{"A", 7}
 };
 
-std::unordered_map<std::string, std::uint8_t> REG16_QQ_TO_ID = {
+std::unordered_map<std::string, uint8_t> REG16_QQ_TO_ID = {
 	{"BC", 0},
 	{"DE", 1},
 	{"HL", 2},
 	{"AF", 3},
 };
 
-std::unordered_map<std::string, std::uint8_t> REG16_SS_TO_ID = {
+std::unordered_map<std::string, uint8_t> REG16_SS_TO_ID = {
 	{"BC", 0},
 	{"DE", 1},
 	{"HL", 2},
 	{"SP", 3},
 };
 
-std::unordered_map<std::string, std::uint8_t> REG16_PP_TO_ID = {
+std::unordered_map<std::string, uint8_t> REG16_PP_TO_ID = {
 	{"BC", 0},
 	{"DE", 1},
 	{"IX", 2},
 	{"SP", 3},
 };
 
-std::unordered_map<std::string, std::uint8_t> REG16_RR_TO_ID = {
+std::unordered_map<std::string, uint8_t> REG16_RR_TO_ID = {
 	{"BC", 0},
 	{"DE", 1},
 	{"IY", 2},
@@ -109,9 +109,9 @@ std::pair<std::string, std::string> get_2_operands(std::string mnemonic, int end
 	);
 }
 
-std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
+std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 {
-	std::vector<std::uint8_t> bytes = {};
+	std::vector<uint8_t> bytes = {};
 	int end_of_mnemonic = instruction.find(' ');
 	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
 	if (mnemonic == "NOP")
@@ -142,7 +142,7 @@ std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 	return bytes;
 }
 
-void Assembler::write_all(std::vector<std::uint8_t> bytes)
+void Assembler::write_all(std::vector<uint8_t> bytes)
 {
 	for (auto byte : bytes)
 	{

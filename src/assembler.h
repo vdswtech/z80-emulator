@@ -13,8 +13,8 @@ class Assembler
 		Memory* memory;
 	public:
 		Assembler(Memory *memory);
-		std::vector<std::uint8_t> encode_instruction(std::string instruction);
-		void write_all(std::vector<std::uint8_t> bytes);
+		std::vector<uint8_t> encode_instruction(std::string instruction);
+		void write_all(std::vector<uint8_t> bytes);
 };
 
 #endif
