@@ -179,18 +179,41 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	}
 	else if (mnemonic == "INC")
 	{
-		/*
-		 * INC r (8-bit) 0b 00rrr100
-		 * INC (HL)
-		 * INC (IX+d) 0xDD 0x34 dd
-		 * INC (IY+d) 0xFD 0x34 dd
-		 *
-		 * 
-		 * INC ss (16-bit) 0b 00ss0011
-		 * INC IX 0xDD 0x23
-		 * INC IY 0xFD 0x23
-		 */
-
+		std::string operand = get_1_operand(mnemonic, end_of_mnemonic);
+		// first, handle IX/IY
+		if (operand.rfind("I", 0) == 0)
+		{
+			// INC IX 0xDD 0x23
+			// INC IY 0xFD 0x23
+			bytes.push_back(get_index_reg_byte(operand[1]));
+			bytes.push_back(0x23);
+		}
+		// then, (IX+d) and (IY+d)
+		// starts with "(I"
+		else if (operand.rfind("(I", 0) == 0)
+		{
+			// INC (IX+d) 0xDD 0x34 dd
+			// INC (IY+d) 0xFD 0x34 dd
+			bytes.push_back(get_index_reg_byte(operand[2]));
+			bytes.push_back(0x34);
+			// TODO: implement finding and writing the offset
+		}
+		else if (uint8_t reg8_id = reg8_to_id(operand); reg8_id != 0xFF)
+		{
+			// INC r (8-bit) 0b 00rrr100
+			// INC (HL)
+			bytes.push_back(0b00000100 | (reg8_id << 3));
+		}
+		else if (uint8_t reg16_id = reg16_to_id(operand, Reg16Group::SS); reg16_id != 0xFF)
+		{
+			// INC ss (16-bit) 0b 00ss0011
+			bytes.push_back(0b00000011 | (reg16_id << 4));
+		}
+		else
+		{
+			//otherwise, the operand is invalid
+			throw std::invalid_argument("unknown operand " + operand + " to INC");
+		}
 	}
 	return bytes;
 }
