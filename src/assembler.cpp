@@ -80,10 +80,39 @@ std::string get_1_operand(std::string mnemonic, int end_of_mnemonic)
 	return mnemonic.substr(end_of_mnemonic + 1);
 }
 
+std::pair<std::string, std::string> get_2_operands(std::string mnemonic, int end_of_mnemonic)
+{
+	/*
+	 * ld a, b
+	 *   ^ ^
+	 *   e c
+	 *   o l
+	 *   m
+ 	 */
+	if (end_of_mnemonic == mnemonic.npos)
+	{
+		throw std::invalid_argument("expected 2 operands, got 0");
+	}
+
+	int comma_location = mnemonic.find(", ", end_of_mnemonic);
+
+	if (comma_location == mnemonic.npos)
+	{
+		throw std::invalid_argument("expected 2 operands, got 1");
+	}
+
+	int first_operand_length = comma_location - end_of_mnemonic - 1;
+
+	return std::pair<std::string, std::string>(
+		mnemonic.substr(end_of_mnemonic + 1, first_operand_length),
+		mnemonic.substr(comma_location + 2)
+	);
+}
+
 std::vector<std::uint8_t> Assembler::encode_instruction(std::string instruction)
 {
 	std::vector<std::uint8_t> bytes = {};
-	int end_of_mnemonic = instruction.find(" ");
+	int end_of_mnemonic = instruction.find(' ');
 	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
 	if (mnemonic == "NOP")
 	{
