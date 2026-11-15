@@ -4,6 +4,10 @@
 
 Z80::Z80(Memory *memory)
 {
+	for (uint8_t i=0; i<16; i++)
+		general_purpose_registers[i] = 0xFF;
+
+	running = false;
 	this->memory = memory;
 	reset_register_pointers();
 }
@@ -16,6 +20,15 @@ void Z80::execute()
 	ir = memory->read8(pc);
 	pc++;
 
+	if (ir == 0x2F) // CPL. Invert A register
+	{
+		*a = ~*a;
+		*f += flag_bits.halfcarry;
+		*f += flag_bits.addsub;
+	}
+	/*
+	 * TODO: increment commands need flag modifications
+	 */
 	if (ir == 0x3C) // inc register A
 	{
 		*a += 1;
@@ -82,7 +95,7 @@ void Z80::reset()
 	iy = 0xFFFF;
 
 	// General Purpose Registers
-	for (std::uint8_t i = 0; i < 16; i++)
+	for (uint8_t i = 0; i < 16; i++)
 	{
 		general_purpose_registers[i] = 0xFF;
 	}
@@ -91,18 +104,18 @@ void Z80::reset()
 
 void Z80::reset_register_pointers()
 {
-	a = (std::uint8_t*) &general_purpose_registers;
-	f = (std::uint8_t*) &general_purpose_registers + 1;
-	b = (std::uint8_t*) &general_purpose_registers + 2;
-	c = (std::uint8_t*) &general_purpose_registers + 3;
-	d = (std::uint8_t*) &general_purpose_registers + 4;
-	e = (std::uint8_t*) &general_purpose_registers + 5;
-	h = (std::uint8_t*) &general_purpose_registers + 6;
-	l = (std::uint8_t*) &general_purpose_registers + 7;
-	af = (std::uint16_t*) &general_purpose_registers;
-	bc = (std::uint16_t*) &general_purpose_registers + 2;
-	de = (std::uint16_t*) &general_purpose_registers + 4;
-	hl = (std::uint16_t*) &general_purpose_registers + 6;
+	a = (uint8_t*) &general_purpose_registers;
+	f = (uint8_t*) &general_purpose_registers + 1;
+	b = (uint8_t*) &general_purpose_registers + 2;
+	c = (uint8_t*) &general_purpose_registers + 3;
+	d = (uint8_t*) &general_purpose_registers + 4;
+	e = (uint8_t*) &general_purpose_registers + 5;
+	h = (uint8_t*) &general_purpose_registers + 6;
+	l = (uint8_t*) &general_purpose_registers + 7;
+	af = (uint16_t*) &general_purpose_registers;
+	bc = (uint16_t*) &general_purpose_registers + 2;
+	de = (uint16_t*) &general_purpose_registers + 4;
+	hl = (uint16_t*) &general_purpose_registers + 6;
 }
 
 bool Z80::run_status()

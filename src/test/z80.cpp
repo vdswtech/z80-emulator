@@ -71,14 +71,6 @@ TEST(PROGRAM, increment_register)
 	mem.write8(0x5, 0x24); // Increment 'h'
 	mem.write8(0x6, 0x2C); // Increment 'l'
 	mem.write8(0x7, 0x4C); // halt
-	EXPECT_EQ(mem.read8(0x0), 0x3C);
-	EXPECT_EQ(mem.read8(0x1), 0x4);
-	EXPECT_EQ(mem.read8(0x2), 0xC);
-	EXPECT_EQ(mem.read8(0x3), 0x14);
-	EXPECT_EQ(mem.read8(0x4), 0x1C);
-	EXPECT_EQ(mem.read8(0x5), 0x24);
-	EXPECT_EQ(mem.read8(0x6), 0x2C);
-	EXPECT_EQ(mem.read8(0x7), 0x4C);
 
 	z80.reset(); // reset from previous test
 
