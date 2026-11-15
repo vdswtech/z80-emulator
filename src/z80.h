@@ -62,18 +62,13 @@ struct FLAGS
 class Z80
 {
 	private:
-		FLAGS flag_bits; // Hex values for switching bit in f register
+		FLAGS flag_bits;        // Hex values for switching bit in f register
+		uint8_t flag_bytes[63]; // Hex value for all variants of flags being enabled
 
 		// CPU state
-		// Registers
-		std::uint8_t general_purpose_registers[16] {
-			0xFF, 0xFF, 0xFF, 0xFF,
-			0xFF, 0xFF, 0xFF, 0xFF,
-			0xFF, 0xFF, 0xFF, 0xFF,
-			0xFF, 0xFF, 0xFF, 0xFF
-		};
-		Memory* memory;                                 // System RAM
-		bool running { false };                                  // Is system running?
+		std::uint8_t general_purpose_registers[16]; // register memory location
+		Memory* memory;                             // System RAM
+		bool running;                               // Is system running?
 
 		// general purpose registers
 		std::uint8_t* a {}; // Accumulator
