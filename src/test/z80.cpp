@@ -82,14 +82,8 @@ TEST(PROGRAM, increment_register)
 	EXPECT_EQ(z80.get_gp_register_state(r_h), 0xFF);
 	EXPECT_EQ(z80.get_gp_register_state(r_l), 0xFF);
 
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
-	z80.step();
+	for (uint8_t i=0; i<8; i++)
+		z80.step();
 
 	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x0);
 	EXPECT_EQ(z80.get_gp_register_state(r_b), 0x0);
