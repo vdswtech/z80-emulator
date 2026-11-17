@@ -104,6 +104,66 @@ Assembler::Assembler(Memory *memory)
 	this->memory = memory;
 }
 
+std::vector<std::string> get_operands(std::string instruction, size_t end_of_mnemonic)
+{
+	if (end_of_mnemonic == instruction.npos)
+	{
+		return {};
+	}
+
+	size_t comma_location = instruction.find(", ", end_of_mnemonic);
+
+	if (comma_location == instruction.npos)
+	{
+		/*
+		 * inc a
+		 *    ^
+		 *    e
+		 *    o
+		 *    m
+		 */
+		return { instruction.substr(end_of_mnemonic + 1) };
+	}
+	else
+	{
+		/*
+		 * ld a, b
+		 *   ^ ^
+		 *   e c
+		 *   o l
+		 *   m
+		 */
+		assert(comma_location != instruction.npos);
+		size_t first_operand_length = comma_location - end_of_mnemonic - 1;
+		return {
+			instruction.substr(end_of_mnemonic + 1, first_operand_length),
+			instruction.substr(comma_location + 2)
+		};
+	}
+}
+
+void assert_operands_is_length(std::vector<std::string>& operands, size_t length)
+{
+	size_t operands_length = operands.size();
+	if (operands_length != length)
+	{
+		char* error_msg;
+		std::snprintf(error_msg, 27, "expected %zu operands, got %zu", length, operands_length);
+		throw std::invalid_argument(error_msg);
+	}
+}
+
+void assert_operands_is_between_length(std::vector<std::string>& operands, size_t low, size_t high)
+{
+	size_t operands_length = operands.size();
+	if (operands_length < low || operands_length > high)
+	{
+		char* error_msg;
+		std::snprintf(error_msg, 29, "expected %zu-%zu operands, got %zu", low, high, operands_length);
+		throw std::invalid_argument(error_msg);
+	}
+}
+
 void assert_0_operands(std::string instruction, size_t end_of_mnemonic)
 {
 	if (end_of_mnemonic != instruction.npos)
@@ -164,6 +224,44 @@ std::pair<std::string, std::string> get_2_operands(std::string instruction, size
 		instruction.substr(comma_location + 2)
 	);
 }
+
+std::unordered_map<std::string, std::vector<uint8_t>> mnemonic_0_operands_to_bytes = 
+{
+	{"nop", {0x00}},
+	{"rlca", {0x07}},
+	{"rrca", {0x0F}},
+	{"rla", {0x17}},
+	{"rra", {0x1F}},
+	{"daa", {0x27}},
+	{"cpl", {0x2F}},
+	{"scf", {0x37}},
+	{"ccf", {0x3F}},
+	{"halt", {0x76}},
+	{"exx", {0xD9}},
+	{"di", {0xF3}},
+	{"ei", {0xFB}},
+	{"neg", {0xED, 0x44}},
+	{"retn", {0xED, 0x45}},
+	{"reti", {0xED, 0x4D}},
+	{"rrd", {0xED, 0x67}},
+	{"rld", {0xED, 0x6F}},
+	{"ldi", {0xED, 0xA0}},
+	{"cpi", {0xED, 0xA1}},
+	{"ini", {0xED, 0xA2}},
+	{"outi", {0xED, 0xA3}},
+	{"ldd",  {0xED, 0xA8}},
+	{"cpd",  {0xED, 0xA9}},
+	{"ind",  {0xED, 0xAA}},
+	{"outd", {0xED, 0xAB}},
+	{"ldir",  {0xED, 0xB0}},
+	{"cpir",  {0xED, 0xB1}},
+	{"inir",  {0xED, 0xB2}},
+	{"outir", {0xED, 0xB3}},
+	{"lddr",  {0xED, 0xB8}},
+	{"cpdr",  {0xED, 0xB9}},
+	{"indr",  {0xED, 0xBA}},
+	{"outdr", {0xED, 0xBB}},
+};
 
 std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 {
