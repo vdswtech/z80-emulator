@@ -219,6 +219,45 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 			throw std::invalid_argument("unknown operand " + operand + " to inc");
 		}
 	}
+	else if (mnemonic == "dec")
+	{
+		std::string operand = get_1_operand(instruction, end_of_mnemonic);
+		// first, handle ix/iy
+		// starts with "i"
+		if (operand.rfind("i", 0) == 0)
+		{
+			// dec ix 0xDD 0x2B
+			// dec iy 0xFD 0x2B
+			bytes.push_back(get_index_reg_byte(operand[1]));
+			bytes.push_back(0x2B);
+		}
+		// then, (ix+d) and (iy+d)
+		// starts with "(i"
+		else if (operand.rfind("(i", 0) == 0)
+		{
+			// dec (ix+d) 0xDD 0x35 dd
+			// dec (iy+d) 0xFD 0x35 dd
+			bytes.push_back(get_index_reg_byte(operand[2]));
+			bytes.push_back(0x35);
+			// TODO: implement finding and writing the offset
+		}
+		else if (uint8_t reg8_id = reg8_to_id(operand); reg8_id != 0xFF)
+		{
+			// dec r (8-bit) 0b 00rrr101
+			// dec (hl)
+			bytes.push_back(0b00000101 | (reg8_id << 3));
+		}
+		else if (uint8_t reg16_id = reg16_to_id(operand, Reg16Group::SS); reg16_id != 0xFF)
+		{
+			// dec ss (16-bit) 0b 00ss1011
+			bytes.push_back(0b00001011 | (reg16_id << 4));
+		}
+		else
+		{
+			//otherwise, the operand is invalid
+			throw std::invalid_argument("unknown operand " + operand + " to dec");
+		}
+	}
 	return bytes;
 }
 
