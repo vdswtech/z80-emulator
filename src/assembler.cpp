@@ -4,42 +4,42 @@
 
 std::unordered_map<std::string, uint8_t> REG8_TO_ID =
 {
-	{"B", 0},
-	{"C", 1},
-	{"D", 2},
-	{"E", 3},
-	{"H", 4},
-	{"L", 5},
-	{"(HL)", 6},
-	{"A", 7}
+	{"b", 0},
+	{"c", 1},
+	{"d", 2},
+	{"e", 3},
+	{"h", 4},
+	{"l", 5},
+	{"(hl)", 6},
+	{"a", 7}
 };
 
 std::unordered_map<std::string, uint8_t> REG16_QQ_TO_ID = {
-	{"BC", 0},
-	{"DE", 1},
-	{"HL", 2},
-	{"AF", 3},
+	{"bc", 0},
+	{"de", 1},
+	{"hl", 2},
+	{"af", 3},
 };
 
 std::unordered_map<std::string, uint8_t> REG16_SS_TO_ID = {
-	{"BC", 0},
-	{"DE", 1},
-	{"HL", 2},
-	{"SP", 3},
+	{"bc", 0},
+	{"de", 1},
+	{"hl", 2},
+	{"sp", 3},
 };
 
 std::unordered_map<std::string, uint8_t> REG16_PP_TO_ID = {
-	{"BC", 0},
-	{"DE", 1},
-	{"IX", 2},
-	{"SP", 3},
+	{"bc", 0},
+	{"de", 1},
+	{"ix", 2},
+	{"sp", 3},
 };
 
 std::unordered_map<std::string, uint8_t> REG16_RR_TO_ID = {
-	{"BC", 0},
-	{"DE", 1},
-	{"IY", 2},
-	{"SP", 3},
+	{"bc", 0},
+	{"de", 1},
+	{"iy", 2},
+	{"sp", 3},
 };
 
 enum class Reg16Group {
@@ -86,9 +86,9 @@ uint8_t get_index_reg_byte(char index_reg)
 {
 	switch (index_reg)
 	{
-		case 'X':
+		case 'x':
 			return 0xDD;
-		case 'Y':
+		case 'y':
 			return 0xFD;
 		default:
 			throw std::invalid_argument("Index register must be X or Y");
@@ -167,52 +167,53 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	std::vector<uint8_t> bytes = {};
 	int end_of_mnemonic = instruction.find(' ');
 	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
-	if (mnemonic == "NOP")
+	if (mnemonic == "nop")
 	{
 		assert_0_operands(mnemonic, end_of_mnemonic);
 		bytes.push_back(0x0);
 	}
-	else if (mnemonic == "HALT")
+	else if (mnemonic == "halt")
 	{
 		assert_0_operands(mnemonic, end_of_mnemonic);
 		bytes.push_back(0x76);
 	}
-	else if (mnemonic == "INC")
+	else if (mnemonic == "inc")
 	{
 		std::string operand = get_1_operand(instruction, end_of_mnemonic);
-		// first, handle IX/IY
-		if (operand.rfind("I", 0) == 0)
+		// first, handle ix/iy
+		// starts with "i"
+		if (operand.rfind("i", 0) == 0)
 		{
-			// INC IX 0xDD 0x23
-			// INC IY 0xFD 0x23
+			// inc ix 0xDD 0x23
+			// inc iy 0xFD 0x23
 			bytes.push_back(get_index_reg_byte(operand[1]));
 			bytes.push_back(0x23);
 		}
-		// then, (IX+d) and (IY+d)
-		// starts with "(I"
-		else if (operand.rfind("(I", 0) == 0)
+		// then, (ix+d) and (iy+d)
+		// starts with "(i"
+		else if (operand.rfind("(i", 0) == 0)
 		{
-			// INC (IX+d) 0xDD 0x34 dd
-			// INC (IY+d) 0xFD 0x34 dd
+			// inc (ix+d) 0xDD 0x34 dd
+			// inc (iy+d) 0xFD 0x34 dd
 			bytes.push_back(get_index_reg_byte(operand[2]));
 			bytes.push_back(0x34);
 			// TODO: implement finding and writing the offset
 		}
 		else if (uint8_t reg8_id = reg8_to_id(operand); reg8_id != 0xFF)
 		{
-			// INC r (8-bit) 0b 00rrr100
-			// INC (HL)
+			// inc r (8-bit) 0b 00rrr100
+			// inc (hl)
 			bytes.push_back(0b00000100 | (reg8_id << 3));
 		}
 		else if (uint8_t reg16_id = reg16_to_id(operand, Reg16Group::SS); reg16_id != 0xFF)
 		{
-			// INC ss (16-bit) 0b 00ss0011
+			// inc ss (16-bit) 0b 00ss0011
 			bytes.push_back(0b00000011 | (reg16_id << 4));
 		}
 		else
 		{
 			//otherwise, the operand is invalid
-			throw std::invalid_argument("unknown operand " + operand + " to INC");
+			throw std::invalid_argument("unknown operand " + operand + " to inc");
 		}
 	}
 	return bytes;
