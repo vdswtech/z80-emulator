@@ -1,4 +1,5 @@
 #include "assembler.h"
+#include <cassert>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -79,6 +80,8 @@ uint8_t reg16_to_id(std::string reg16, Reg16Group group)
 			return map_reg_to_id(REG16_PP_TO_ID, reg16);
 		case Reg16Group::RR:
 			return map_reg_to_id(REG16_RR_TO_ID, reg16);
+		default:
+			throw std::invalid_argument("unknown Reg16Group");
 	}
 }
 
@@ -101,7 +104,7 @@ Assembler::Assembler(Memory *memory)
 	this->memory = memory;
 }
 
-void assert_0_operands(std::string instruction, int end_of_mnemonic)
+void assert_0_operands(std::string instruction, size_t end_of_mnemonic)
 {
 	if (end_of_mnemonic != instruction.npos)
 	{
@@ -109,7 +112,7 @@ void assert_0_operands(std::string instruction, int end_of_mnemonic)
 	}
 }
 
-std::string get_1_operand(std::string instruction, int end_of_mnemonic)
+std::string get_1_operand(std::string instruction, size_t end_of_mnemonic)
 {
 	/*
 	 * inc a
@@ -123,7 +126,7 @@ std::string get_1_operand(std::string instruction, int end_of_mnemonic)
 		throw std::invalid_argument("expected 1 operand, got 0");
 	}
 
-	int comma_location = instruction.find(", ", end_of_mnemonic);
+	size_t comma_location = instruction.find(", ", end_of_mnemonic);
 
 	if (comma_location != instruction.npos)
 	{
@@ -133,7 +136,7 @@ std::string get_1_operand(std::string instruction, int end_of_mnemonic)
 	return instruction.substr(end_of_mnemonic + 1);
 }
 
-std::pair<std::string, std::string> get_2_operands(std::string instruction, int end_of_mnemonic)
+std::pair<std::string, std::string> get_2_operands(std::string instruction, size_t end_of_mnemonic)
 {
 	/*
 	 * ld a, b
@@ -147,14 +150,14 @@ std::pair<std::string, std::string> get_2_operands(std::string instruction, int 
 		throw std::invalid_argument("expected 2 operands, got 0");
 	}
 
-	int comma_location = instruction.find(", ", end_of_mnemonic);
+	size_t comma_location = instruction.find(", ", end_of_mnemonic);
 
 	if (comma_location == instruction.npos)
 	{
 		throw std::invalid_argument("expected 2 operands, got 1");
 	}
 
-	int first_operand_length = comma_location - end_of_mnemonic - 1;
+	size_t first_operand_length = comma_location - end_of_mnemonic - 1;
 
 	return std::pair<std::string, std::string>(
 		instruction.substr(end_of_mnemonic + 1, first_operand_length),
