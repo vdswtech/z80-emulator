@@ -20,28 +20,19 @@ void Z80::execute()
 	ir = memory->read8(pc);
 	pc++;
 
-	if (ir == 0x2F) // CPL. Invert A register
-	{
-		*a = ~*a;
-		*f += flag_bits.halfcarry;
-		*f += flag_bits.addsub;
-	}
-	/*
-	 * TODO: increment commands need flag modifications
-	 */
-	if (ir == 0x3C) { inc(a); } // inc register A
-
-	if (ir == 0x4) { inc(b); } // inc register B
-
-	if (ir == 0xC) { inc(c); } // inc register C
-
-	if (ir == 0x14) { inc(d); } // inc register D
-
-	if (ir == 0x1C) { inc(e); } // inc register E
-
-	if (ir == 0x24) { inc(h); } // inc register H
-
-	if (ir == 0x2C) { inc(l); } // inc register L
+	if (ir == 0x3C) { inc8(a); }                  // inc register A
+	if (ir == 0x4) { inc8(b); }                   // inc register B
+	if (ir == 0xC) { inc8(c); }                   // inc register C
+	if (ir == 0x14) { inc8(d); }                  // inc register D
+	if (ir == 0x1C) { inc8(e); }                  // inc register E
+	if (ir == 0x24) { inc8(h); }                  // inc register H
+	if (ir == 0x2C) { inc8(l); }                  // inc register L
+	if (ir == 0x3) { inc16(bc); }                 // inc register BC
+	if (ir == 0x13) { inc16(de); }                // inc register DE
+	if (ir == 0x23) { inc16(hl); }                // inc register HL
+	if (ir == 0x33) { inc16(&sp); }               // inc register SP
+	if (ir == 0xDD && ir+1 == 23) { inc16(&ix); } // inc register ix
+	if (ir == 0xFD && ir+1 == 23) { inc16(&iy); } // inc register iy
 
 	if (ir == 0x0) { return; } // NOP
 
@@ -82,36 +73,41 @@ bool Z80::f_s_is_set()
 	return ((*f) & (1 << 7)) != 0;
 }
 
-void Z80::inc(uint8_t* reg)
+void Z80::inc8(uint8_t* reg)
+{
+	bool rollover = (*reg == 0x7F);
+	*reg += 1;
+	update_f(*reg, std::nullopt, rollover);
+}
+
+void Z80::inc16(uint16_t* reg)
+{
+	bool rollover = (*reg == 0x7F);
+	*reg += 1;
+	update_f(std::nullopt, *reg, rollover);
+}
+
+void Z80::update_f(std::optional<uint8_t> reg8, std::optional<uint16_t> reg16, bool rollover)
 {
 	uint8_t flags = 0;
-	if (*reg == 0x7F)
-	{
+
+	if (rollover)
 		flags += 0x4;
-	}
 
-	*reg += 1;
-
-	if (*reg == 0)
+	if ((reg8 == 0 || reg16 == 0))
 	{
 		flags -= 0x80;
 		flags += 0x40;
 	}
-	if (*reg > 0)
+	if ((reg8 > 0 || reg16 > 0))
 	{
 		flags -= 0x80;
 		flags -= 0x40;
 	}
 	if (f_n_is_set())
-	{
 		flags += 0x2;
-	}
-	update_f(flags);
-}
 
-void Z80::update_f(uint8_t value)
-{
-	*f = value;
+	*f = flags;
 }
 
 void Z80::step()
@@ -137,9 +133,7 @@ void Z80::reset()
 
 	// General Purpose Registers
 	for (uint8_t i = 0; i < 16; i++)
-	{
 		general_purpose_registers[i] = 0xFF;
-	}
 	reset_register_pointers();
 }
 
