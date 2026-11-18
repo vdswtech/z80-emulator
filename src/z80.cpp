@@ -43,35 +43,17 @@ void Z80::execute()
 	}
 }
 
-bool Z80::f_c_is_set()
-{
-	return ((*f) & (1 << 0)) != 0;
-}
+bool Z80::f_c_is_set() { return ((*f) & (1 << 0)) != 0; }
 
-bool Z80::f_n_is_set()
-{
-	return ((*f) & (1 << 1)) != 0;
-}
+bool Z80::f_n_is_set() { return ((*f) & (1 << 1)) != 0; }
 
-bool Z80::f_pv_is_set()
-{
-	return ((*f) & (1 << 2)) != 0;
-}
+bool Z80::f_pv_is_set() { return ((*f) & (1 << 2)) != 0; }
 
-bool Z80::f_h_is_set()
-{
-	return ((*f) & (1 << 4)) != 0;
-}
+bool Z80::f_h_is_set() { return ((*f) & (1 << 4)) != 0; }
 
-bool Z80::f_z_is_set()
-{
-	return ((*f) & (1 << 6)) != 0;
-}
+bool Z80::f_z_is_set() { return ((*f) & (1 << 6)) != 0; }
 
-bool Z80::f_s_is_set()
-{
-	return ((*f) & (1 << 7)) != 0;
-}
+bool Z80::f_s_is_set() { return ((*f) & (1 << 7)) != 0; }
 
 void Z80::inc8(uint8_t* reg)
 {
@@ -93,25 +75,21 @@ void Z80::update_f(std::optional<uint8_t> reg8, std::optional<uint16_t> reg16, b
 
 	if (rollover)
 		flags += 0x4;
-
 	if ((reg8 == 0 || reg16 == 0))
-	{
-		flags -= 0x80;
-		flags += 0x40;
-	}
-	if ((reg8 > 0 || reg16 > 0))
-	{
-		flags -= 0x80;
 		flags -= 0x40;
-	}
+	if ((reg8 > 0 || reg16 > 0))
+		flags -= 0xC0;
 	if (f_n_is_set())
-		flags += 0x2;
 
 	*f = flags;
 }
 
 void Z80::step()
 {
+	/*
+	 * If step is called and the program counter is set to zero, start the program
+	 * Run execute until running flag is set to false
+	 */
 	if (pc == 0)
 		running = true;
 	if (running)
@@ -153,57 +131,24 @@ void Z80::reset_register_pointers()
 	hl = (uint16_t*) &general_purpose_registers + 6;
 }
 
-bool Z80::run_status()
-{
-	return running;
-}
+bool Z80::run_status() { return running; }
 
-uint8_t Z80::get_gp_register_state(register_pos position)
-{
-	return general_purpose_registers[position];
-}
+uint8_t Z80::get_gp_register_state(register_pos position) { return general_purpose_registers[position]; }
 
-uint8_t Z80::get_ir()
-{
-	return ir;
-}
+uint8_t Z80::get_ir() { return ir; }
 
-uint16_t Z80::get_pc()
-{
-	return pc;
-}
+uint16_t Z80::get_pc() { return pc; }
 
-uint16_t Z80::get_sp()
-{
-	return sp;
-}
+uint16_t Z80::get_sp() { return sp; }
 
-uint16_t Z80::get_ix()
-{
-	return ix;
-}
+uint16_t Z80::get_ix() { return ix; }
 
-uint16_t Z80::get_iy()
-{
-	return iy;
-}
+uint16_t Z80::get_iy() { return iy; }
 
-uint16_t Z80::get_af()
-{
-	return *af;
-}
+uint16_t Z80::get_af() { return *af; }
 
-uint16_t Z80::get_bc()
-{
-	return *bc;
-}
+uint16_t Z80::get_bc() { return *bc; }
 
-uint16_t Z80::get_de()
-{
-	return *de;
-}
+uint16_t Z80::get_de() { return *de; }
 
-uint16_t Z80::get_hl()
-{
-	return *hl;
-}
+uint16_t Z80::get_hl() { return *hl; }
