@@ -93,18 +93,20 @@ class Z80
 		uint16_t sp { 0xFFFF }; // Stack Pointer
 		uint16_t pc {};         // Program Counter
 
-		void execute();     // Execute instruction
-		bool f_c_is_set();  // Check if Carry flag is set
-		bool f_n_is_set();  // Check if Add/Subtract flag is set
-		bool f_pv_is_set(); // Check if Parity/Overflow flag is set
-		bool f_h_is_set();  // Check if Half Carry flag is set
-		bool f_z_is_set();  // Check if Zero flag is set
-		bool f_s_is_set();  // Check if Sign flag is set
+		void execute();   // Execute instruction
+		void add();       // Execute any add calls
+		void increment(); // Execute any increment calls
 
 		//  Execute helper scripts
-		void inc8(uint8_t* reg);                         // Increment a register
-		void inc16(uint16_t* reg);                       // Increment a register
-		void update_f8(uint8_t *reg8, bool rollover);    // Update Flags register
+		bool f_c_is_set();                            // Check if Carry flag is set
+		bool f_n_is_set();                            // Check if Add/Subtract flag is set
+		bool f_pv_is_set();                           // Check if Parity/Overflow flag is set
+		bool f_h_is_set();                            // Check if Half Carry flag is set
+		bool f_z_is_set();                            // Check if Zero flag is set
+		bool f_s_is_set();                            // Check if Sign flag is set
+		void inc8(uint8_t* reg);                      // Increment a register
+		void inc16(uint16_t* reg);                    // Increment a register
+		void update_f8(uint8_t *reg8, bool rollover); // Update Flags register
 	public:
 		Z80(Memory* memory);
 		~Z80();
