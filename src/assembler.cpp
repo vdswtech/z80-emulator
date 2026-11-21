@@ -164,7 +164,7 @@ void assert_operands_is_between_length(std::vector<std::string>& operands, size_
 	}
 }
 
-std::unordered_map<std::string, std::vector<uint8_t>> MNEMONIC_TO_BYTES_0_OPERANDS =
+std::unordered_map<std::string, bytes_t> MNEMONIC_TO_BYTES_0_OPERANDS =
 {
 	{"nop", {0x00}},
 	{"rlca", {0x07}},
@@ -203,7 +203,7 @@ std::unordered_map<std::string, std::vector<uint8_t>> MNEMONIC_TO_BYTES_0_OPERAN
 	{"outdr", {0xED, 0xBB}},
 };
 
-std::vector<uint8_t> encode_0_operand_instruction(std::string instruction)
+bytes_t encode_0_operand_instruction(std::string instruction)
 {
 	auto bytes_iterator = MNEMONIC_TO_BYTES_0_OPERANDS.find(instruction);
 	if (bytes_iterator != MNEMONIC_TO_BYTES_0_OPERANDS.end())
@@ -216,9 +216,9 @@ std::vector<uint8_t> encode_0_operand_instruction(std::string instruction)
 	}
 }
 
-std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
+bytes_t Assembler::encode_instruction(std::string instruction)
 {
-	std::vector<uint8_t> bytes = {};
+	bytes_t bytes = {};
 	int end_of_mnemonic = instruction.find(' ');
 	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
 	std::vector<std::string> operands = get_operands(instruction, end_of_mnemonic);
@@ -309,7 +309,7 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	return bytes;
 }
 
-void Assembler::write_all(std::vector<uint8_t> bytes)
+void Assembler::write_all(bytes_t bytes)
 {
 	for (auto byte : bytes)
 	{

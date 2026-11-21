@@ -1,22 +1,21 @@
 #include "assembler.h"
 #include <cstdint>
-#include <vector>
 
-std::vector<uint8_t> make_vec_1(uint8_t a)
+bytes_t make_vec_1(uint8_t a)
 {
-	std::vector<uint8_t> ret = { a };
+	bytes_t ret = { a };
 	return ret;
 }
 
-std::vector<uint8_t> make_vec_2(uint8_t a, uint8_t b)
+bytes_t make_vec_2(uint8_t a, uint8_t b)
 {
-	std::vector<uint8_t> ret = { a, b };
+	bytes_t ret = { a, b };
 	return ret;
 }
 
-std::vector<uint8_t> make_vec_3(uint8_t a, uint8_t b, uint8_t c)
+bytes_t make_vec_3(uint8_t a, uint8_t b, uint8_t c)
 {
-	std::vector<uint8_t> ret = { a, b, c };
+	bytes_t ret = { a, b, c };
 	return ret;
 }
 
@@ -25,7 +24,7 @@ Assembler assembler(&memory);
 
 TEST(AssemblerTest, nop)
 {
-	EXPECT_EQ(assembler.encode_instruction("nop"), make_vec_1(0x00));
+	EXPECT_EQ(assembler.encode_instruction("nop"), bytes_t { 0x00 });
 }
 
 TEST(AssemblerTest, halt)

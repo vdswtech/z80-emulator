@@ -6,6 +6,8 @@
 #include <vector>
 #include "memory.h"
 
+typedef std::vector<uint8_t> bytes_t;
+
 class Assembler
 {
 	private:
@@ -13,8 +15,8 @@ class Assembler
 		Memory* memory;
 	public:
 		Assembler(Memory *memory);
-		std::vector<uint8_t> encode_instruction(std::string instruction);
-		void write_all(std::vector<uint8_t> bytes);
+		bytes_t encode_instruction(std::string instruction);
+		void write_all(bytes_t bytes);
 };
 
 #endif
