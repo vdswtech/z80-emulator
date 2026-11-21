@@ -104,65 +104,64 @@ Assembler::Assembler(Memory *memory)
 	this->memory = memory;
 }
 
-void assert_0_operands(std::string instruction, size_t end_of_mnemonic)
+std::vector<std::string> get_operands(std::string instruction, size_t end_of_mnemonic)
 {
-	if (end_of_mnemonic != instruction.npos)
-	{
-		throw std::invalid_argument("expected 0 operands, got more than 0");
-	}
-}
-
-std::string get_1_operand(std::string instruction, size_t end_of_mnemonic)
-{
-	/*
-	 * inc a
-	 *    ^
-	 *    e
-	 *    o
-	 *    m
- 	 */
 	if (end_of_mnemonic == instruction.npos)
 	{
-		throw std::invalid_argument("expected 1 operand, got 0");
-	}
-
-	size_t comma_location = instruction.find(", ", end_of_mnemonic);
-
-	if (comma_location != instruction.npos)
-	{
-		throw std::invalid_argument("expected 1 operand, got 2");
-	}
-
-	return instruction.substr(end_of_mnemonic + 1);
-}
-
-std::pair<std::string, std::string> get_2_operands(std::string instruction, size_t end_of_mnemonic)
-{
-	/*
-	 * ld a, b
-	 *   ^ ^
-	 *   e c
-	 *   o l
-	 *   m
- 	 */
-	if (end_of_mnemonic == instruction.npos)
-	{
-		throw std::invalid_argument("expected 2 operands, got 0");
+		return {};
 	}
 
 	size_t comma_location = instruction.find(", ", end_of_mnemonic);
 
 	if (comma_location == instruction.npos)
 	{
-		throw std::invalid_argument("expected 2 operands, got 1");
+		/*
+		 * inc a
+		 *    ^
+		 *    e
+		 *    o
+		 *    m
+		 */
+		return { instruction.substr(end_of_mnemonic + 1) };
 	}
+	else
+	{
+		/*
+		 * ld a, b
+		 *   ^ ^
+		 *   e c
+		 *   o l
+		 *   m
+		 */
+		assert(comma_location != instruction.npos);
+		size_t first_operand_length = comma_location - end_of_mnemonic - 1;
+		return {
+			instruction.substr(end_of_mnemonic + 1, first_operand_length),
+			instruction.substr(comma_location + 2)
+		};
+	}
+}
 
-	size_t first_operand_length = comma_location - end_of_mnemonic - 1;
+void assert_operands_is_length(std::vector<std::string>& operands, size_t length)
+{
+	size_t operands_length = operands.size();
+	if (operands_length != length)
+	{
+		char error_msg[28];
+		std::snprintf(error_msg, 27, "expected %zu operands, got %zu", length, operands_length);
+		throw std::invalid_argument(error_msg);
+	}
+}
 
-	return std::pair<std::string, std::string>(
-		instruction.substr(end_of_mnemonic + 1, first_operand_length),
-		instruction.substr(comma_location + 2)
-	);
+void assert_operands_is_between_length(std::vector<std::string>& operands, size_t low, size_t high)
+{
+	size_t operands_length = operands.size();
+	if (operands_length < low || operands_length > high)
+	{
+		char error_msg[30];
+		std::snprintf(error_msg, 29, "expected %zu-%zu operands, got %zu", low, high, operands_length);
+		throw std::invalid_argument(error_msg);
+	}
 }
 
 std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
@@ -170,19 +169,21 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	std::vector<uint8_t> bytes = {};
 	int end_of_mnemonic = instruction.find(' ');
 	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
+	std::vector<std::string> operands = get_operands(instruction, end_of_mnemonic);
 	if (mnemonic == "nop")
 	{
-		assert_0_operands(mnemonic, end_of_mnemonic);
+		assert_operands_is_length(operands, 0);
 		bytes.push_back(0x0);
 	}
 	else if (mnemonic == "halt")
 	{
-		assert_0_operands(mnemonic, end_of_mnemonic);
+		assert_operands_is_length(operands, 0);
 		bytes.push_back(0x76);
 	}
 	else if (mnemonic == "inc")
 	{
-		std::string operand = get_1_operand(instruction, end_of_mnemonic);
+		assert_operands_is_length(operands, 1);
+		std::string operand = operands[0];
 		// first, handle ix/iy
 		// starts with "i"
 		if (operand.rfind("i", 0) == 0)
@@ -221,7 +222,8 @@ std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 	}
 	else if (mnemonic == "dec")
 	{
-		std::string operand = get_1_operand(instruction, end_of_mnemonic);
+		assert_operands_is_length(operands, 1);
+		std::string operand = operands[0];
 		// first, handle ix/iy
 		// starts with "i"
 		if (operand.rfind("i", 0) == 0)
