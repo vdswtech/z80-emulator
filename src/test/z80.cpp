@@ -113,3 +113,18 @@ TEST(PROGRAM, increment_16bit_register)
 	EXPECT_EQ(z80.get_hl(), 0x0); // Check register 'HL' is set to 0x0
 	EXPECT_EQ(z80.get_sp(), 0x0); // Check register 'SP' is set to 0x0
 }
+
+TEST(PROGRAM, single_register_increment_flag_checks)
+{
+	mem.write8(0x1, 0x4);  // Increment 'b'
+	mem.write8(0x4, 0x4C); // halt
+	z80.reset(); // reset from previous test
+
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0xFF);
+
+	for (uint8_t i=0; i<2; i++)
+		z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0x0); // Check register b is set to zero
+	EXPECT_EQ(z80.get_gp_register_state(r_f), 0x54);
+}

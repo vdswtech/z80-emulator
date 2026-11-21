@@ -1,5 +1,6 @@
 #include "z80.h"
 #include "memory.h"
+
 #include <iostream>
 
 Z80::Z80(Memory *memory)
@@ -41,47 +42,44 @@ void Z80::execute()
 		running = false;
 		return;
 	}
+	ir++;
 }
 
 bool Z80::f_c_is_set() { return ((*f) & (1 << 0)) != 0; }
-
 bool Z80::f_n_is_set() { return ((*f) & (1 << 1)) != 0; }
-
 bool Z80::f_pv_is_set() { return ((*f) & (1 << 2)) != 0; }
-
 bool Z80::f_h_is_set() { return ((*f) & (1 << 4)) != 0; }
-
 bool Z80::f_z_is_set() { return ((*f) & (1 << 6)) != 0; }
-
 bool Z80::f_s_is_set() { return ((*f) & (1 << 7)) != 0; }
 
 void Z80::inc8(uint8_t* reg)
 {
-	bool rollover = (*reg == 0x7F);
-	*reg += 1;
-	update_f(*reg, std::nullopt, rollover);
+	bool rollover = ((*reg) == 0xFF);
+	(*reg) += 1;
+	update_f8(reg, rollover);
 }
 
 void Z80::inc16(uint16_t* reg)
 {
-	bool rollover = (*reg == 0x7F);
-	*reg += 1;
-	update_f(std::nullopt, *reg, rollover);
+	(*reg) += 1;
 }
 
-void Z80::update_f(std::optional<uint8_t> reg8, std::optional<uint16_t> reg16, bool rollover)
+void Z80::update_f8(uint8_t *reg8, bool rollover)
 {
-	uint8_t flags = 0;
-
+	uint8_t flags = 0x0;
 	if (rollover)
-		flags += 0x4;
-	if ((reg8 == 0 || reg16 == 0))
-		flags -= 0x40;
-	if ((reg8 > 0 || reg16 > 0))
-		flags -= 0xC0;
-	if (f_n_is_set())
-
-	*f = flags;
+	{
+		flags |= flag_bits.pv;
+	}
+	if ((*reg8) == 0)
+	{
+		flags |= flag_bits.zero;
+	}
+	if (((*reg8) & 0b0000) == 0)
+	{
+		flags |= flag_bits.halfcarry;
+	}
+	(*f) = flags;
 }
 
 void Z80::step()
@@ -132,23 +130,13 @@ void Z80::reset_register_pointers()
 }
 
 bool Z80::run_status() { return running; }
-
 uint8_t Z80::get_gp_register_state(register_pos position) { return general_purpose_registers[position]; }
-
 uint8_t Z80::get_ir() { return ir; }
-
 uint16_t Z80::get_pc() { return pc; }
-
 uint16_t Z80::get_sp() { return sp; }
-
 uint16_t Z80::get_ix() { return ix; }
-
 uint16_t Z80::get_iy() { return iy; }
-
 uint16_t Z80::get_af() { return *af; }
-
 uint16_t Z80::get_bc() { return *bc; }
-
 uint16_t Z80::get_de() { return *de; }
-
 uint16_t Z80::get_hl() { return *hl; }
