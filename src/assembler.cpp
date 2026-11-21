@@ -164,21 +164,67 @@ void assert_operands_is_between_length(std::vector<std::string>& operands, size_
 	}
 }
 
+std::unordered_map<std::string, std::vector<uint8_t>> MNEMONIC_TO_BYTES_0_OPERANDS =
+{
+	{"nop", {0x00}},
+	{"rlca", {0x07}},
+	{"rrca", {0x0F}},
+	{"rla", {0x17}},
+	{"rra", {0x1F}},
+	{"daa", {0x27}},
+	{"cpl", {0x2F}},
+	{"scf", {0x37}},
+	{"ccf", {0x3F}},
+	{"halt", {0x76}},
+	{"ret", {0xC9}},
+	{"exx", {0xD9}},
+	{"di", {0xF3}},
+	{"ei", {0xFB}},
+	{"neg", {0xED, 0x44}},
+	{"retn", {0xED, 0x45}},
+	{"reti", {0xED, 0x4D}},
+	{"rrd", {0xED, 0x67}},
+	{"rld", {0xED, 0x6F}},
+	{"ldi", {0xED, 0xA0}},
+	{"cpi", {0xED, 0xA1}},
+	{"ini", {0xED, 0xA2}},
+	{"outi", {0xED, 0xA3}},
+	{"ldd",  {0xED, 0xA8}},
+	{"cpd",  {0xED, 0xA9}},
+	{"ind",  {0xED, 0xAA}},
+	{"outd", {0xED, 0xAB}},
+	{"ldir",  {0xED, 0xB0}},
+	{"cpir",  {0xED, 0xB1}},
+	{"inir",  {0xED, 0xB2}},
+	{"outir", {0xED, 0xB3}},
+	{"lddr",  {0xED, 0xB8}},
+	{"cpdr",  {0xED, 0xB9}},
+	{"indr",  {0xED, 0xBA}},
+	{"outdr", {0xED, 0xBB}},
+};
+
+std::vector<uint8_t> encode_0_operand_instruction(std::string instruction)
+{
+	auto bytes_iterator = MNEMONIC_TO_BYTES_0_OPERANDS.find(instruction);
+	if (bytes_iterator != MNEMONIC_TO_BYTES_0_OPERANDS.end())
+	{
+		return bytes_iterator->second;
+	}
+	else
+	{
+		throw std::invalid_argument("Unknown 0-operand instruction " + instruction);
+	}
+}
+
 std::vector<uint8_t> Assembler::encode_instruction(std::string instruction)
 {
 	std::vector<uint8_t> bytes = {};
 	int end_of_mnemonic = instruction.find(' ');
 	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
 	std::vector<std::string> operands = get_operands(instruction, end_of_mnemonic);
-	if (mnemonic == "nop")
+	if (operands.size() == 0)
 	{
-		assert_operands_is_length(operands, 0);
-		bytes.push_back(0x0);
-	}
-	else if (mnemonic == "halt")
-	{
-		assert_operands_is_length(operands, 0);
-		bytes.push_back(0x76);
+		return encode_0_operand_instruction(instruction);
 	}
 	else if (mnemonic == "inc")
 	{
