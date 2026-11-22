@@ -1,4 +1,15 @@
 #include "assembler.h"
+#include <format>
+
+std::string bytes_to_string(bytes_t bytes)
+{
+	std::string output {};
+	for (uint8_t byte : bytes)
+	{
+		output += std::format("{:02X}", byte);
+	}
+	return output;
+}
 
 testing::AssertionResult ExpectInstructionAssemblesTo(std::string instruction, bytes_t bytes, bytes_t expected_bytes)
 {
@@ -9,8 +20,8 @@ testing::AssertionResult ExpectInstructionAssemblesTo(std::string instruction, b
 	else
 	{
 		return testing::AssertionFailure()
-			<< instruction << " assembles to " << testing::PrintToString(bytes)
-			<< ", expected " << testing::PrintToString(expected_bytes);
+			<< instruction << " assembles to " << bytes_to_string(bytes)
+			<< ", expected " << bytes_to_string(expected_bytes);
 	}
 }
 
