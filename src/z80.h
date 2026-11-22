@@ -96,6 +96,7 @@ class Z80
 		void execute();   // Execute instruction
 		void add();       // Execute any add calls
 		void increment(); // Execute any increment calls
+		void ld();		  // Execute ld calls
 
 		//  Execute helper scripts
 		bool f_c_is_set();                            // Check if Carry flag is set

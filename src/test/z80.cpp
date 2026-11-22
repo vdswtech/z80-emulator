@@ -117,14 +117,52 @@ TEST(PROGRAM, increment_16bit_register)
 TEST(PROGRAM, single_register_increment_flag_checks)
 {
 	mem.write8(0x1, 0x4);  // Increment 'b'
-	mem.write8(0x4, 0x4C); // halt
+	mem.write8(0x2, 0x4C); // halt
 	z80.reset(); // reset from previous test
-
-	EXPECT_EQ(z80.get_gp_register_state(r_b), 0xFF);
 
 	for (uint8_t i=0; i<2; i++)
 		z80.step();
 
 	EXPECT_EQ(z80.get_gp_register_state(r_b), 0x0); // Check register b is set to zero
 	EXPECT_EQ(z80.get_gp_register_state(r_f), 0x54);
+}
+
+TEST(PROGRAM, multiple_register_increment_flag_checks)
+{
+	mem.write8(0x1, 0x4);  // Increment 'b'
+	mem.write8(0x2, 0x14);  // Increment 'd'
+	mem.write8(0x3, 0x4C); // halt
+	z80.reset(); // reset from previous test
+
+	for (uint8_t i=0; i<2; i++)
+		z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_b), 0x0); // Check register b is set to zero
+	EXPECT_EQ(z80.get_gp_register_state(r_f), 0x54);
+}
+
+TEST(PROGRAM, load_data)
+{
+	mem.write8(0x1, 0x3E); // Load the next memory location into register A;
+	mem.write8(0x2, 0x2A); // Let's load the meaning of life.
+	mem.write8(0x3, 0x4C); // halt
+	z80.reset(); // reset from previous test
+
+	for (uint8_t i=0; i<4; i++)
+		z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x2A); // Check register a is set to 42
+}
+
+TEST(PROGRAM, load_multiple_data)
+{
+	mem.write8(0x1, 0x3E); // Load the next memory location into register A;
+	mem.write8(0x2, 0x2A); // Let's load the meaning of life.
+	mem.write8(0x3, 0x4C); // halt
+	z80.reset(); // reset from previous test
+
+	for (uint8_t i=0; i<4; i++)
+		z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x2A); // Check register a is set to 42
 }

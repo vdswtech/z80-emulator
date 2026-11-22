@@ -23,6 +23,7 @@ void Z80::execute()
 
 	add();
 	increment();
+	ld();
 
 	if (ir == 0x0) { return; } // NOP
 
@@ -31,6 +32,19 @@ void Z80::execute()
 		running = false;
 		return;
 	}
+}
+
+void Z80::add()
+{
+	bool rollover = ((*a) == 0xFF);
+	if (ir == 0x80) { (*a) += (*b); } // Add register B to register A
+	if (ir == 0x81) { (*a) += (*b); } // Add register C to register A
+	if (ir == 0x82) { (*a) += (*b); } // Add register D to register A
+	if (ir == 0x83) { (*a) += (*b); } // Add register E to register A
+	if (ir == 0x84) { (*a) += (*b); } // Add register H to register A
+	if (ir == 0x85) { (*a) += (*b); } // Add register L to register A
+	if (ir == 0x87) { (*a) += (*b); } // Add register A to register A
+	update_f8(a, rollover);
 }
 
 void Z80::increment()
@@ -50,36 +64,16 @@ void Z80::increment()
 	if (ir == 0xFD && ir+1 == 23) { inc16(&iy); } // inc register iy
 }
 
-void Z80::add()
+// https://k1.spdns.de/Develop/Hardware/Infomix/ICs%20computer/Microprocessor/Z80/Z80%20Software%20%2B%20Info/Z80.Instruction%20set.pdf
+void Z80::ld()
 {
-	if (ir == 0x80) // Add register B to register A
-	{
-	}
-
-	if (ir == 0x81) // Add register C to register A
-	{
-	}
-
-	if (ir == 0x82) // Add register D to register A
-	{
-	}
-
-	if (ir == 0x83) // Add register E to register A
-	{
-	}
-
-	if (ir == 0x84) // Add register H to register A
-	{
-	}
-
-	if (ir == 0x85) // Add register L to register A
-	{
-	}
-
-	if (ir == 0x87) // Add register A to register A
-	{
-	}
-
+	if (ir == 0x3E) { (*a) = memory->read8(pc); } // ld a
+	if (ir == 0x6) { (*b) = memory->read8(pc); }  // ld b
+	if (ir == 0xE) { (*c) = memory->read8(pc); }  // ld c
+	if (ir == 0x16) { (*d) = memory->read8(pc); } // ld d
+	if (ir == 0x1E) { (*e) = memory->read8(pc); } // ld e
+	if (ir == 0x26) { (*h) = memory->read8(pc); } // ld h
+	if (ir == 0x2E) { (*l) = memory->read8(pc); } // ld l
 }
 
 bool Z80::f_c_is_set() { return ((*f) & (1 << 0)) != 0; }
