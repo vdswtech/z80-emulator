@@ -1,5 +1,6 @@
 #include "assembler.h"
 #include <cassert>
+#include <format>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -94,7 +95,7 @@ uint8_t get_index_reg_byte(char index_reg)
 		case 'y':
 			return 0xFD;
 		default:
-			throw std::invalid_argument("Index register must be X or Y");
+			throw std::invalid_argument(std::format("unknown index register i%s", index_reg));
 	}
 }
 
@@ -147,9 +148,7 @@ void assert_operands_is_length(std::vector<std::string>& operands, size_t length
 	size_t operands_length = operands.size();
 	if (operands_length != length)
 	{
-		char error_msg[28];
-		std::snprintf(error_msg, 27, "expected %zu operands, got %zu", length, operands_length);
-		throw std::invalid_argument(error_msg);
+		throw std::invalid_argument(std::format("expected %zu operands, got %zu", length, operands_length));
 	}
 }
 
@@ -158,9 +157,7 @@ void assert_operands_is_between_length(std::vector<std::string>& operands, size_
 	size_t operands_length = operands.size();
 	if (operands_length < low || operands_length > high)
 	{
-		char error_msg[30];
-		std::snprintf(error_msg, 29, "expected %zu-%zu operands, got %zu", low, high, operands_length);
-		throw std::invalid_argument(error_msg);
+		throw std::invalid_argument(std::format("expected %zu-%zu operands, got %zu", low, high, operands_length));
 	}
 }
 
