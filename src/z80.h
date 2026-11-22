@@ -2,7 +2,6 @@
 #define __Z80_H__
 
 #include <cstdint>
-#include <optional>
 #include <string>
 
 #include "memory.h"
@@ -107,7 +106,7 @@ class Z80
 		bool f_s_is_set();                            // Check if Sign flag is set
 		void inc8(uint8_t* reg);                      // Increment a register
 		void inc16(uint16_t* reg);                    // Increment a register
-		void update_f8(uint8_t *reg8, bool rollover); // Update Flags register
+		inline void update_f8(uint8_t *reg8, bool rollover); // Update Flags register
 	public:
 		Z80(Memory* memory);
 		~Z80();

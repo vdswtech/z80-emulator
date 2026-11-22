@@ -1,8 +1,6 @@
 #include "z80.h"
 #include "memory.h"
 
-#include <iostream>
-
 Z80::Z80(Memory *memory)
 {
 	for (uint8_t i=0; i<16; i++)
@@ -95,7 +93,7 @@ void Z80::inc16(uint16_t* reg)
 	(*reg) += 1;
 }
 
-void Z80::update_f8(uint8_t *reg8, bool rollover)
+inline void Z80::update_f8(uint8_t *reg8, bool rollover)
 {
 	uint8_t flags = 0x0;
 	if (rollover)
