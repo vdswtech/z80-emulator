@@ -43,14 +43,43 @@ class AssemblerTest : public testing::Test
 		}
 };
 
-TEST_F(AssemblerTest, nop)
+TEST_F(AssemblerTest, no_operand_instructions)
 {
 	InstructionAssembleTest("nop", { 0x00 });
-}
-
-TEST_F(AssemblerTest, halt)
-{
+	InstructionAssembleTest("rlca", { 0x07 });
+	InstructionAssembleTest("rrca", { 0x0F });
+	InstructionAssembleTest("rla", { 0x17 });
+	InstructionAssembleTest("rra", { 0x1F });
+	InstructionAssembleTest("daa", { 0x27 });
+	InstructionAssembleTest("cpl", { 0x2F });
+	InstructionAssembleTest("scf", { 0x37 });
+	InstructionAssembleTest("ccf", { 0x3F });
 	InstructionAssembleTest("halt", { 0x76 });
+	InstructionAssembleTest("ret", { 0xC9 });
+	InstructionAssembleTest("exx", { 0xD9 });
+	InstructionAssembleTest("di", { 0xF3 });
+	InstructionAssembleTest("ei", { 0xFB });
+	InstructionAssembleTest("neg", { 0xED, 0x44 });
+	InstructionAssembleTest("retn", { 0xED, 0x45 });
+	InstructionAssembleTest("reti", { 0xED, 0x4D });
+	InstructionAssembleTest("rrd", { 0xED, 0x67 });
+	InstructionAssembleTest("rld", { 0xED, 0x6F });
+	InstructionAssembleTest("ldi", { 0xED, 0xA0 });
+	InstructionAssembleTest("cpi", { 0xED, 0xA1 });
+	InstructionAssembleTest("ini", { 0xED, 0xA2 });
+	InstructionAssembleTest("outi", { 0xED, 0xA3 });
+	InstructionAssembleTest("ldd", { 0xED, 0xA8 });
+	InstructionAssembleTest("cpd", { 0xED, 0xA9 });
+	InstructionAssembleTest("ind", { 0xED, 0xAA });
+	InstructionAssembleTest("outd", { 0xED, 0xAB });
+	InstructionAssembleTest("ldir", { 0xED, 0xB0 });
+	InstructionAssembleTest("cpir", { 0xED, 0xB1 });
+	InstructionAssembleTest("inir", { 0xED, 0xB2 });
+	InstructionAssembleTest("outir", { 0xED, 0xB3 });
+	InstructionAssembleTest("lddr", { 0xED, 0xB8 });
+	InstructionAssembleTest("cpdr", { 0xED, 0xB9 });
+	InstructionAssembleTest("indr", { 0xED, 0xBA });
+	InstructionAssembleTest("outdr", { 0xED, 0xBB });
 }
 
 TEST_F(AssemblerTest, inc_reg8)
