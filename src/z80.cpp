@@ -52,6 +52,34 @@ void Z80::increment()
 
 void Z80::add()
 {
+	if (ir == 0x80) // Add register B to register A
+	{
+	}
+
+	if (ir == 0x81) // Add register C to register A
+	{
+	}
+
+	if (ir == 0x82) // Add register D to register A
+	{
+	}
+
+	if (ir == 0x83) // Add register E to register A
+	{
+	}
+
+	if (ir == 0x84) // Add register H to register A
+	{
+	}
+
+	if (ir == 0x85) // Add register L to register A
+	{
+	}
+
+	if (ir == 0x87) // Add register A to register A
+	{
+	}
+
 }
 
 bool Z80::f_c_is_set() { return ((*f) & (1 << 0)) != 0; }
