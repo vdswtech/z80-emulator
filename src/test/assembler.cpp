@@ -1,14 +1,34 @@
 #include "assembler.h"
 
+testing::AssertionResult ExpectInstructionAssemblesTo(std::string instruction, bytes_t bytes, bytes_t expected_bytes)
+{
+	if (bytes == expected_bytes)
+	{
+		return testing::AssertionSuccess();
+	}
+	else
+	{
+		return testing::AssertionFailure()
+			<< instruction << " assembles to " << testing::PrintToString(bytes)
+			<< ", expected " << testing::PrintToString(expected_bytes);
+	}
+}
+
 class AssemblerTest : public testing::Test
 {
 	protected:
 		Memory memory {};
 		Assembler assembler { Assembler(&memory) };
 
-		void InstructionAssembleTest(std::string instruction, bytes_t value)
+		void InstructionAssembleTest(std::string instruction, bytes_t expected_bytes)
 		{
-			EXPECT_EQ(assembler.encode_instruction(instruction), value);
+			EXPECT_TRUE(
+				ExpectInstructionAssemblesTo(
+					instruction,
+					assembler.encode_instruction(instruction),
+					expected_bytes
+				)
+			);
 		}
 };
 
