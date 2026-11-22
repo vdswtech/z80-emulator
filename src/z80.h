@@ -2,6 +2,7 @@
 #define __Z80_H__
 
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #include "memory.h"
@@ -33,30 +34,30 @@ struct FLAGS
 	 * +-----+--------+-----------------+
 	 * | Bit | Symbol | Name            |
 	 * +-----+--------+-----------------+
-	 * |  7  |   S    | Sign            |
+	 * |  8  |   S    | Sign            |
 	 * +-----+--------+-----------------+
-	 * |  6  |   z    | Zero            |
+	 * |  7  |   Z    | Zero            |
 	 * +-----+--------+-----------------+
-	 * |  5  |   F5   | UNDOCUMENTED    |
+	 * |  6  |   F5   | UNDOCUMENTED    |
 	 * +-----+--------+-----------------+
-	 * |  4  |   H    | Half Carry      |
+	 * |  5  |   H    | Half Carry      |
 	 * +-----+--------+-----------------+
-	 * |  3  |   F3   | UNDOCUMENTED    |
+	 * |  4  |   F3   | UNDOCUMENTED    |
 	 * +-----+--------+-----------------+
-	 * |  2  |   P/V  | Parity/Overflow |
+	 * |  3  |   P/V  | Parity/Overflow |
 	 * +-----+--------+-----------------+
-	 * |  1  |   N    | Add/Subtract    |
+	 * |  2  |   N    | Add/Subtract    |
 	 * +-----+--------+-----------------+
-	 * |  0  |   C    | Carry           |
+	 * |  1  |   C    | Carry           |
 	 * +-----+--------+-----------------+
 	 */
 
-	uint8_t sign      = 0x80;
-	uint8_t zero      = 0x40;
-	uint8_t halfcarry = 0x10;
-	uint8_t pv        = 0x4;
-	uint8_t addsub    = 0x2;
-	uint8_t carry     = 0x1;
+	uint8_t sign      = 0b10000000;
+	uint8_t zero      = 0b01000000;
+	uint8_t halfcarry = 0b00010000;
+	uint8_t pv        = 0b00000100;
+	uint8_t addsub    = 0b00000010;
+	uint8_t carry     = 0b00000001;
 };
 
 class Z80
@@ -84,15 +85,29 @@ class Z80
 		uint16_t* hl {};
 
 		// special purpose registers
-		uint8_t i { 0xFF };   // Interrupt page register
-		uint8_t r { 0xFF };   // Memory refresh gegister
-		uint8_t ir {};  // Instruction register
+		uint8_t i { 0xFF };     // Interrupt page register
+		uint8_t r { 0xFF };     // Memory refresh gegister
+		uint8_t ir {0x0};       // Instruction register
 		uint16_t ix { 0xFFFF }; // Index X register
 		uint16_t iy { 0xFFFF }; // Index Y register
 		uint16_t sp { 0xFFFF }; // Stack Pointer
-		uint16_t pc {}; // Program Counter
+		uint16_t pc {};         // Program Counter
 
-		void execute(); // Execute instruction
+		void execute();   // Execute instruction
+		void add();       // Execute any add calls
+		void increment(); // Execute any increment calls
+		void ld();		  // Execute ld calls
+
+		//  Execute helper scripts
+		bool f_c_is_set();                            // Check if Carry flag is set
+		bool f_n_is_set();                            // Check if Add/Subtract flag is set
+		bool f_pv_is_set();                           // Check if Parity/Overflow flag is set
+		bool f_h_is_set();                            // Check if Half Carry flag is set
+		bool f_z_is_set();                            // Check if Zero flag is set
+		bool f_s_is_set();                            // Check if Sign flag is set
+		void inc8(uint8_t* reg);                      // Increment a register
+		void inc16(uint16_t* reg);                    // Increment a register
+		void update_f8(uint8_t *reg8, bool rollover); // Update Flags register
 	public:
 		Z80(Memory* memory);
 		~Z80();
