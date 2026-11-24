@@ -1,6 +1,13 @@
 #include "assembler.h"
 #include <format>
 
+/**
+ * Takes a bytes_t object and returns a string containing the hexadecimal representation of those bytes.
+ * Ex. { 0xFD, 0x42 } => "FD42"
+ *
+ * @param bytes	The bytes object.
+ * @return		A string that represents the hexadecimal representation of the bytes.
+ */
 std::string bytes_to_string(bytes_t& bytes)
 {
 	std::string output {};
@@ -11,6 +18,14 @@ std::string bytes_to_string(bytes_t& bytes)
 	return output;
 }
 
+/**
+ * Determine if the instruction assembles to the given bytes. Reports a sensible error message when it doesn't.
+ *
+ * @param instruction	  The string representing the instruction.
+ * @param bytes			  The assembler's output for the bytes that represent the instruction.
+ * @param expected_bytes  What the assembler's output is supposed to be.
+ * @return				  True if bytes == expected_bytes, and an error message if they aren't equal.
+ */
 testing::AssertionResult ExpectInstructionAssemblesTo(std::string instruction, bytes_t& bytes, bytes_t& expected_bytes)
 {
 	if (bytes == expected_bytes)
@@ -31,6 +46,12 @@ class AssemblerTest : public testing::Test
 		Memory memory {};
 		Assembler assembler { Assembler(&memory) };
 
+		/**
+		 * Test if the given instruction assembles to the given bytes.
+		 *
+		 * @param instruction	  The string representing the instruction.
+		 * @param expected_bytes  What the assembler's output is supposed to be.
+		 */
 		void InstructionAssembleTest(std::string instruction, bytes_t expected_bytes)
 		{
 			bytes_t bytes = assembler.encode_instruction(instruction);
