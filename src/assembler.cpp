@@ -213,6 +213,18 @@ bytes_t encode_0_operand_instruction(std::string_view instruction)
 	}
 }
 
+/**
+ * Encode a string representing a number into an 8-bit number. Support binary, octal, hexadecimal, or decimal.
+ * 1010000b = %1010000 = 120o = o120 = 80 = 50h = $50
+ *
+ * @param number_string	The string containing the number to encode.
+ * @return	The 8-bit number represented. Raise an exception if the number doesn't fit inside 8 bits.
+ */
+uint8_t encode_number8(std::string_view number_string)
+{
+	return 0;
+}
+
 bytes_t Assembler::encode_instruction(std::string_view instruction)
 {
 	bytes_t bytes = {};
