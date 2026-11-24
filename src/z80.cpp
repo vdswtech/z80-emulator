@@ -35,13 +35,13 @@ void Z80::execute()
 void Z80::add()
 {
 	bool rollover = ((*a) == 0xFF);
-	if (ir == 0x80) { (*a) += (*b); } // Add register B to register A
-	if (ir == 0x81) { (*a) += (*b); } // Add register C to register A
-	if (ir == 0x82) { (*a) += (*b); } // Add register D to register A
-	if (ir == 0x83) { (*a) += (*b); } // Add register E to register A
-	if (ir == 0x84) { (*a) += (*b); } // Add register H to register A
-	if (ir == 0x85) { (*a) += (*b); } // Add register L to register A
-	if (ir == 0x87) { (*a) += (*b); } // Add register A to register A
+	if (ir == 0x80) { (*a) = (*a) + (*b); } // Add register B to register A
+	if (ir == 0x81) { (*a) = (*a) + (*c); } // Add register C to register A
+	if (ir == 0x82) { (*a) = (*a) + (*d); } // Add register D to register A
+	if (ir == 0x83) { (*a) = (*a) + (*e); } // Add register E to register A
+	if (ir == 0x84) { (*a) = (*a) + (*h); } // Add register H to register A
+	if (ir == 0x85) { (*a) = (*a) + (*l); } // Add register L to register A
+	if (ir == 0x87) { (*a) = (*a) + (*a); } // Add register A to register A
 	update_f8(a, rollover);
 }
 

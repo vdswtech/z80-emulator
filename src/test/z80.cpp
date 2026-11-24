@@ -169,3 +169,52 @@ TEST(PROGRAM, load_multiple_data)
 	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x2A); // Check register a is set to 42
 	EXPECT_EQ(z80.get_gp_register_state(r_c), 0x2B); // Check register c is set to 43
 }
+
+TEST(PROGRAM, add_reg_a_to_a)
+{
+	mem.write8(0x1, 0x3E); // Load memory into register A
+	mem.write8(0x2, 0x2A); // Let's load the meaning of life.
+	mem.write8(0x3, 0x87); // Add register A to register A
+	mem.write8(0x4, 0x4C); // halt
+	z80.reset(); // reset from previous test
+	
+	for (uint8_t i=0; i<4; i++)
+		z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x54);
+}
+
+TEST(PROGRAM, add_reg_b_to_a)
+{
+	mem.write8(0x1, 0x3E); // Load memory into register A
+	mem.write8(0x2, 0x00); // Let's set register A to 0
+	mem.write8(0x3, 0x6);  // Load memory into register B
+	mem.write8(0x4, 0x2A); // Let's set the memory value to the meaning of life
+	mem.write8(0x5, 0x80); // Add register B to register A
+	mem.write8(0x6, 0x4C); // halt
+	z80.reset(); // reset from previous test
+
+	for (uint8_t i=0; i<6; i++)
+		z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x2A);
+}
+
+TEST(PROGRAM, multi_add_to_a)
+{
+	z80.reset(); // reset from previous test
+	mem.write8(0x1, 0x3E); // Load memory into register A
+	mem.write8(0x2, 0x00); // Let's set register A to 0
+	mem.write8(0x3, 0x6);  // Load memory into register B
+	mem.write8(0x4, 0x2A); // Let's set the memory value to the meaning of life
+	mem.write8(0x5, 0x80); // Add register B to register A
+	mem.write8(0x6, 0x6);  // Load memory into register B Again
+	mem.write8(0x7, 0x2B); // Let's set the memory value to the meaning of life
+	mem.write8(0x8, 0x80); // Add register B to register A
+	mem.write8(0x9, 0x4C); // halt
+
+	for (uint8_t i=0; i<9; i++)
+		z80.step();
+
+	EXPECT_EQ(z80.get_gp_register_state(r_a), 0x55);
+}
