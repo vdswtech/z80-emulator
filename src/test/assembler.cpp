@@ -26,7 +26,7 @@ std::string bytes_to_string(bytes_t& bytes)
  * @param expected_bytes  What the assembler's output is supposed to be.
  * @return				  True if bytes == expected_bytes, and an error message if they aren't equal.
  */
-testing::AssertionResult ExpectInstructionAssemblesTo(std::string instruction, bytes_t& bytes, bytes_t& expected_bytes)
+testing::AssertionResult ExpectInstructionAssemblesTo(std::string_view instruction, bytes_t& bytes, bytes_t& expected_bytes)
 {
 	if (bytes == expected_bytes)
 	{
@@ -52,7 +52,7 @@ class AssemblerTest : public testing::Test
 		 * @param instruction	  The string representing the instruction.
 		 * @param expected_bytes  What the assembler's output is supposed to be.
 		 */
-		void InstructionAssembleTest(std::string instruction, bytes_t expected_bytes)
+		void InstructionAssembleTest(std::string_view instruction, bytes_t expected_bytes)
 		{
 			bytes_t bytes = assembler.encode_instruction(instruction);
 			EXPECT_TRUE(

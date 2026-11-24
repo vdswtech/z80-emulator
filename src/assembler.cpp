@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-std::unordered_map<std::string, uint8_t> REG8_TO_ID =
+std::unordered_map<std::string_view, uint8_t> REG8_TO_ID =
 {
 	{"b", 0},
 	{"c", 1},
@@ -16,28 +16,28 @@ std::unordered_map<std::string, uint8_t> REG8_TO_ID =
 	{"a", 7}
 };
 
-std::unordered_map<std::string, uint8_t> REG16_QQ_TO_ID = {
+std::unordered_map<std::string_view, uint8_t> REG16_QQ_TO_ID = {
 	{"bc", 0},
 	{"de", 1},
 	{"hl", 2},
 	{"af", 3},
 };
 
-std::unordered_map<std::string, uint8_t> REG16_SS_TO_ID = {
+std::unordered_map<std::string_view, uint8_t> REG16_SS_TO_ID = {
 	{"bc", 0},
 	{"de", 1},
 	{"hl", 2},
 	{"sp", 3},
 };
 
-std::unordered_map<std::string, uint8_t> REG16_PP_TO_ID = {
+std::unordered_map<std::string_view, uint8_t> REG16_PP_TO_ID = {
 	{"bc", 0},
 	{"de", 1},
 	{"ix", 2},
 	{"sp", 3},
 };
 
-std::unordered_map<std::string, uint8_t> REG16_RR_TO_ID = {
+std::unordered_map<std::string_view, uint8_t> REG16_RR_TO_ID = {
 	{"bc", 0},
 	{"de", 1},
 	{"iy", 2},
@@ -51,7 +51,7 @@ enum class Reg16Group {
 	RR
 };
 
-uint8_t map_reg_to_id(std::unordered_map<std::string, uint8_t> reg_to_id, std::string reg)
+uint8_t map_reg_to_id(std::unordered_map<std::string_view, uint8_t> reg_to_id, std::string_view reg)
 {
 	auto reg_id_iterator = reg_to_id.find(reg);
 	if (reg_id_iterator != reg_to_id.end())
@@ -64,12 +64,12 @@ uint8_t map_reg_to_id(std::unordered_map<std::string, uint8_t> reg_to_id, std::s
 	}
 }
 
-uint8_t reg8_to_id(std::string reg8)
+uint8_t reg8_to_id(std::string_view reg8)
 {
 	return map_reg_to_id(REG8_TO_ID, reg8);
 }
 
-uint8_t reg16_to_id(std::string reg16, Reg16Group group)
+uint8_t reg16_to_id(std::string_view reg16, Reg16Group group)
 {
 	switch (group)
 	{
@@ -105,7 +105,7 @@ Assembler::Assembler(Memory *memory)
 	this->memory = memory;
 }
 
-std::vector<std::string> get_operands(std::string instruction, size_t end_of_mnemonic)
+std::vector<std::string_view> get_operands(std::string_view instruction, size_t end_of_mnemonic)
 {
 	if (end_of_mnemonic == instruction.npos)
 	{
@@ -143,7 +143,7 @@ std::vector<std::string> get_operands(std::string instruction, size_t end_of_mne
 	}
 }
 
-void assert_operands_is_length(std::vector<std::string>& operands, size_t length)
+void assert_operands_is_length(std::vector<std::string_view>& operands, size_t length)
 {
 	size_t operands_length = operands.size();
 	if (operands_length != length)
@@ -152,7 +152,7 @@ void assert_operands_is_length(std::vector<std::string>& operands, size_t length
 	}
 }
 
-void assert_operands_is_between_length(std::vector<std::string>& operands, size_t low, size_t high)
+void assert_operands_is_between_length(std::vector<std::string_view>& operands, size_t low, size_t high)
 {
 	size_t operands_length = operands.size();
 	if (operands_length < low || operands_length > high)
@@ -161,7 +161,7 @@ void assert_operands_is_between_length(std::vector<std::string>& operands, size_
 	}
 }
 
-std::unordered_map<std::string, bytes_t> MNEMONIC_TO_BYTES_0_OPERANDS =
+std::unordered_map<std::string_view, bytes_t> MNEMONIC_TO_BYTES_0_OPERANDS =
 {
 	{"nop", {0x00}},
 	{"rlca", {0x07}},
@@ -200,7 +200,7 @@ std::unordered_map<std::string, bytes_t> MNEMONIC_TO_BYTES_0_OPERANDS =
 	{"outdr", {0xED, 0xBB}},
 };
 
-bytes_t encode_0_operand_instruction(std::string instruction)
+bytes_t encode_0_operand_instruction(std::string_view instruction)
 {
 	auto bytes_iterator = MNEMONIC_TO_BYTES_0_OPERANDS.find(instruction);
 	if (bytes_iterator != MNEMONIC_TO_BYTES_0_OPERANDS.end())
@@ -209,16 +209,16 @@ bytes_t encode_0_operand_instruction(std::string instruction)
 	}
 	else
 	{
-		throw std::invalid_argument("Unknown 0-operand instruction " + instruction);
+		throw std::invalid_argument(std::format("Unknown 0-operand instruction %s", instruction));
 	}
 }
 
-bytes_t Assembler::encode_instruction(std::string instruction)
+bytes_t Assembler::encode_instruction(std::string_view instruction)
 {
 	bytes_t bytes = {};
 	int end_of_mnemonic = instruction.find(' ');
-	std::string mnemonic = instruction.substr(0, end_of_mnemonic);
-	std::vector<std::string> operands = get_operands(instruction, end_of_mnemonic);
+	std::string_view mnemonic = instruction.substr(0, end_of_mnemonic);
+	std::vector<std::string_view> operands = get_operands(instruction, end_of_mnemonic);
 	if (operands.size() == 0)
 	{
 		return encode_0_operand_instruction(instruction);
@@ -226,7 +226,7 @@ bytes_t Assembler::encode_instruction(std::string instruction)
 	else if (mnemonic == "inc")
 	{
 		assert_operands_is_length(operands, 1);
-		std::string operand = operands[0];
+		std::string_view operand = operands[0];
 		// first, handle ix/iy
 		// starts with "i"
 		if (operand.rfind("i", 0) == 0)
@@ -260,13 +260,13 @@ bytes_t Assembler::encode_instruction(std::string instruction)
 		else
 		{
 			//otherwise, the operand is invalid
-			throw std::invalid_argument("unknown operand " + operand + " to inc");
+			throw std::invalid_argument(std::format("unknown operand %s to inc", operand));
 		}
 	}
 	else if (mnemonic == "dec")
 	{
 		assert_operands_is_length(operands, 1);
-		std::string operand = operands[0];
+		std::string_view operand = operands[0];
 		// first, handle ix/iy
 		// starts with "i"
 		if (operand.rfind("i", 0) == 0)
@@ -300,7 +300,7 @@ bytes_t Assembler::encode_instruction(std::string instruction)
 		else
 		{
 			//otherwise, the operand is invalid
-			throw std::invalid_argument("unknown operand " + operand + " to dec");
+			throw std::invalid_argument(std::format("unknown operand %s to dec", operand));
 		}
 	}
 	return bytes;
