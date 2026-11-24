@@ -1,7 +1,7 @@
 #include "assembler.h"
 #include <format>
 
-std::string bytes_to_string(bytes_t bytes)
+std::string bytes_to_string(bytes_t& bytes)
 {
 	std::string output {};
 	for (uint8_t byte : bytes)
@@ -11,7 +11,7 @@ std::string bytes_to_string(bytes_t bytes)
 	return output;
 }
 
-testing::AssertionResult ExpectInstructionAssemblesTo(std::string instruction, bytes_t bytes, bytes_t expected_bytes)
+testing::AssertionResult ExpectInstructionAssemblesTo(std::string instruction, bytes_t& bytes, bytes_t& expected_bytes)
 {
 	if (bytes == expected_bytes)
 	{
@@ -33,10 +33,11 @@ class AssemblerTest : public testing::Test
 
 		void InstructionAssembleTest(std::string instruction, bytes_t expected_bytes)
 		{
+			bytes_t bytes = assembler.encode_instruction(instruction);
 			EXPECT_TRUE(
 				ExpectInstructionAssemblesTo(
 					instruction,
-					assembler.encode_instruction(instruction),
+					bytes,
 					expected_bytes
 				)
 			);
