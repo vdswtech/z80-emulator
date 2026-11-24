@@ -2,18 +2,21 @@
 #define __ASSEMBLER_H__
 
 #include <cstdint>
-#include <string>
+#include <string_view>
+#include <vector>
 #include "memory.h"
 
+typedef std::vector<uint8_t> bytes_t;
 
-class ASSEMBLER
+class Assembler
 {
 	private:
 		uint16_t mem_ptr;
-		Memory* data;
+		Memory* memory;
 	public:
-		ASSEMBLER(Memory* data);
-		void write_command_bytes(std::string command);
+		Assembler(Memory *memory);
+		bytes_t encode_instruction(std::string_view instruction);
+		void write_all(bytes_t bytes);
 };
 
 #endif
