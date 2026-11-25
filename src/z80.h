@@ -69,6 +69,7 @@ class Z80
 		uint16_t sp { 0xFFFF }; // Stack Pointer
 		uint16_t pc {};         // Program Counter
 
+		// execute functions
 		void execute();   // Execute instruction
 		void add();       // Execute any add calls
 		void increment(); // Execute any increment calls
