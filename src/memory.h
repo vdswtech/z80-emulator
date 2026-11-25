@@ -8,7 +8,7 @@
 class Memory
 {
 	private:
-		std::uint8_t bytes[MAX_MEMORY_SIZE] {};
+		uint8_t bytes[MAX_MEMORY_SIZE] {};
 	public:
 		Memory();
 		~Memory();

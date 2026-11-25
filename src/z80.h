@@ -28,77 +28,63 @@ enum register_pos {
 
 struct FLAGS
 {
-	/*
-	 * CPU FLAGS
-	 * +-----+--------+-----------------+
-	 * | Bit | Symbol | Name            |
-	 * +-----+--------+-----------------+
-	 * |  7  |   S    | Sign            |
-	 * +-----+--------+-----------------+
-	 * |  6  |   z    | Zero            |
-	 * +-----+--------+-----------------+
-	 * |  5  |   F5   | UNDOCUMENTED    |
-	 * +-----+--------+-----------------+
-	 * |  4  |   H    | Half Carry      |
-	 * +-----+--------+-----------------+
-	 * |  3  |   F3   | UNDOCUMENTED    |
-	 * +-----+--------+-----------------+
-	 * |  2  |   P/V  | Parity/Overflow |
-	 * +-----+--------+-----------------+
-	 * |  1  |   N    | Add/Subtract    |
-	 * +-----+--------+-----------------+
-	 * |  0  |   C    | Carry           |
-	 * +-----+--------+-----------------+
-	 */
-
-	uint8_t sign      = 0x80;
-	uint8_t zero      = 0x40;
-	uint8_t halfcarry = 0x10;
-	uint8_t pv        = 0x4;
-	uint8_t addsub    = 0x2;
-	uint8_t carry     = 0x1;
+	uint8_t sign      = 0b10000000;
+	uint8_t zero      = 0b01000000;
+	uint8_t halfcarry = 0b00010000;
+	uint8_t pv        = 0b00000100;
+	uint8_t addsub    = 0b00000010;
+	uint8_t carry     = 0b00000001;
 };
 
 class Z80
 {
 	private:
-		FLAGS flag_bits; // Hex values for switching bit in f register
+		FLAGS flag_bits;        // Hex values for switching bit in f register
 
 		// CPU state
-		// Registers
-		std::uint8_t general_purpose_registers[16] {
-			0xFF, 0xFF, 0xFF, 0xFF,
-			0xFF, 0xFF, 0xFF, 0xFF,
-			0xFF, 0xFF, 0xFF, 0xFF,
-			0xFF, 0xFF, 0xFF, 0xFF
-		};
-		Memory* memory;                                 // System RAM
-		bool running { false };                                  // Is system running?
+		std::uint8_t general_purpose_registers[16]; // register memory location
+		Memory* memory;                             // System RAM
+		bool running;                               // Is system running?
 
 		// general purpose registers
-		std::uint8_t* a {}; // Accumulator
-		std::uint8_t* f {}; // Flags
-		std::uint8_t* b {};
-		std::uint8_t* c {};
-		std::uint8_t* d {};
-		std::uint8_t* e {};
-		std::uint8_t* h {};
-		std::uint8_t* l {};
-		std::uint16_t* af {};
-		std::uint16_t* bc {};
-		std::uint16_t* de {};
-		std::uint16_t* hl {};
+		uint8_t* a {}; // Accumulator
+		uint8_t* f {}; // Flags
+		uint8_t* b {};
+		uint8_t* c {};
+		uint8_t* d {};
+		uint8_t* e {};
+		uint8_t* h {};
+		uint8_t* l {};
+		uint16_t* af {};
+		uint16_t* bc {};
+		uint16_t* de {};
+		uint16_t* hl {};
 
 		// special purpose registers
-		std::uint8_t i { 0xFF };   // Interrupt page register
-		std::uint8_t r { 0xFF };   // Memory refresh gegister
-		std::uint8_t ir {};  // Instruction register
-		std::uint16_t ix { 0xFFFF }; // Index X register
-		std::uint16_t iy { 0xFFFF }; // Index Y register
-		std::uint16_t sp { 0xFFFF }; // Stack Pointer
-		std::uint16_t pc {}; // Program Counter
+		uint8_t i { 0xFF };     // Interrupt page register
+		uint8_t r { 0xFF };     // Memory refresh gegister
+		uint8_t ir {0x0};       // Instruction register
+		uint16_t ix { 0xFFFF }; // Index X register
+		uint16_t iy { 0xFFFF }; // Index Y register
+		uint16_t sp { 0xFFFF }; // Stack Pointer
+		uint16_t pc {};         // Program Counter
 
-		void execute(); // Execute instruction
+		// execute functions
+		void execute();   // Execute instruction
+		void add();       // Execute any add calls
+		void increment(); // Execute any increment calls
+		void ld();		  // Execute ld calls
+
+		//  Execute helper scripts
+		bool f_c_is_set();                                   // Check if Carry flag is set
+		bool f_n_is_set();                                   // Check if Add/Subtract flag is set
+		bool f_pv_is_set();                                  // Check if Parity/Overflow flag is set
+		bool f_h_is_set();                                   // Check if Half Carry flag is set
+		bool f_z_is_set();                                   // Check if Zero flag is set
+		bool f_s_is_set();                                   // Check if Sign flag is set
+		void inc8(uint8_t* reg);                             // Increment a register
+		void inc16(uint16_t* reg);                           // Increment a register
+		inline void update_f8(uint8_t *reg8, bool rollover); // Update Flags register
 	public:
 		Z80(Memory* memory);
 		~Z80();

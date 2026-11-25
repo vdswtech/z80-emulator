@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Z80 CPU</title>
+		<meta charset='UTF-8'>
+		<meta name='rating' content='General'>
+	</head>
+	<body>
+		<h1 align="center">Notes on the Z80 CPU</h1> 
+		<div class="flags">
+			<table border=1>
+				<tr>
+					<td align="center"><b>BIT</b></td>
+					<td align="center"><b>SYMBOL</b></td>
+					<td align="center"><b>NAME</b></td>
+					<td align="center"><b>NOTES</b></td>
+				</tr>
+				<tr>
+					<td align="center">8</td>
+					<td align="center">S</td>
+					<td align="center">Sign</td>
+					<td align="center">Set if negative. Unset if positive.</td>
+				</tr>
+				<tr>
+					<td align="center">7</td>
+					<td align="center">Z</td>
+					<td align="center">Zero</td>
+					<td align="center">Set if zero. Unset otherwise.</td>
+				</tr>
+				<tr>
+					<td align="center">6</td>
+					<td align="center">F5</td>
+					<td align="center">UNDOCUMENTED</td>
+					<td align="center">Copy of bit 5.</td>
+				</tr>
+				<tr>
+					<td align="center">5</td>
+					<td align="center">H</td>
+					<td align="center">Half Carry</td>
+					<td align="center">Set if carry from bit 3 to 4. Unset otherwise.</td>
+				</tr>
+				<tr>
+					<td align="center">4</td>
+					<td align="center">F3</td>
+					<td align="center">UNDOCUMENTED</td>
+					<td align="center">Copy of bit 3.</td>
+				</tr>
+				<tr>
+					<td align="center">3</td>
+					<td align="center">P/V</td>
+					<td align="center">Parity/Overflow</td>
+					<td align="center">Set if there is an even number of bits set or an overflow. Unset otherwise.</td>
+				</tr>
+				<tr>
+					<td align="center">2</td>
+					<td align="center">N</td>
+					<td align="center">Add/Subtract</td>
+					<td align="center">Set if the last operation was subtraction. Unset if it was addition.</td>
+				</tr>
+				<tr>
+					<td align="center">1</td>
+					<td align="center">C</td>
+					<td align="center">Carry</td>
+					<td align="center">Set if result does not fit in the register. Unset otherwise.</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>
