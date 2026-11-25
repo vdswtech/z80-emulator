@@ -216,9 +216,24 @@ bytes_t encode_0_operand_instruction(std::string_view instruction)
 int encode_number(std::string_view number_string)
 {
 	int base {};
-	std::string_view number_part {number_string};
+	int sign { 1 };
+	std::string_view number_part { number_string };
 	char start_char = number_string.front();
 	char end_char = number_string.back();
+	// handle sign
+	if (start_char == '-')
+	{
+		sign = -1;
+		number_part.remove_prefix(1);
+		start_char = number_string.front();
+	}
+	else if (start_char == '+')
+	{
+		number_part.remove_prefix(1);
+		start_char = number_string.front();
+	}
+
+	// handle base
 	if (start_char == '%')
 	{
 		base = 2;
@@ -255,7 +270,7 @@ int encode_number(std::string_view number_string)
 		// no characters to remove
 	}
 
-	return std::stoi(std::string(number_part), nullptr, base);
+	return sign * std::stoi(std::string(number_part), nullptr, base);
 }
 
 /**
