@@ -16,8 +16,6 @@ class Assembler
 	public:
 		Assembler(Memory *memory);
 		bytes_t encode_instruction(std::string_view instruction);
-		int8_t encode_number8(std::string_view number_string);
-		uint16_t encode_number16(std::string_view number_string);
 		void write_all(bytes_t bytes);
 };
 

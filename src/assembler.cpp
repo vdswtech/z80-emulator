@@ -265,7 +265,7 @@ int encode_number(std::string_view number_string)
  * @param number_string	The string containing the number to encode.
  * @return	The 8-bit number represented. Raise an exception if the number doesn't fit inside 8 bits.
  */
-int8_t Assembler::encode_number8(std::string_view number_string)
+int8_t encode_number8(std::string_view number_string)
 {
 	int encoded_number = encode_number(number_string);
 	if (encoded_number < INT8_MIN || encoded_number > UINT8_MAX)
@@ -286,7 +286,7 @@ int8_t Assembler::encode_number8(std::string_view number_string)
  * @param number_string	The string containing the number to encode.
  * @return	The 16-bit number represented. Raise an exception if the number doesn't fit inside 16 bits.
  */
-uint16_t Assembler::encode_number16(std::string_view number_string)
+uint16_t encode_number16(std::string_view number_string)
 {
 	int encoded_number = encode_number(number_string);
 	if (encoded_number < 0 || encoded_number > UINT16_MAX)

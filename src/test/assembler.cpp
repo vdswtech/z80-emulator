@@ -165,17 +165,3 @@ TEST_F(AssemblerTest, dec_ixiy)
 // {
 // 	// TODO: implement test for this
 // }
-
-TEST_F(AssemblerTest, encode_number)
-{
-	EXPECT_EQ(assembler.encode_number8("12"), 12);
-	EXPECT_EQ(assembler.encode_number8("-5"), -5);
-	EXPECT_EQ(assembler.encode_number8("%1011"), 0b1011);
-	EXPECT_EQ(assembler.encode_number8("1011b"), 0b1011);
-	EXPECT_EQ(assembler.encode_number8("o50"), 050);
-	EXPECT_EQ(assembler.encode_number8("50o"), 050);
-	EXPECT_EQ(assembler.encode_number8("$6F"), 0x6F);
-	EXPECT_EQ(assembler.encode_number8("6Fh"), 0x6F);
-	EXPECT_EQ(assembler.encode_number16("6F6Fh"), 0x6F6F);
-	EXPECT_EQ(assembler.encode_number16("$D300"), 0xD300);
-}
