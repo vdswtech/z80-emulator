@@ -63,7 +63,6 @@ void Z80::increment()
 	if (ir == 0xFD && ir+1 == 23) { inc16(&iy); } // inc register iy
 }
 
-// https://k1.spdns.de/Develop/Hardware/Infomix/ICs%20computer/Microprocessor/Z80/Z80%20Software%20%2B%20Info/Z80.Instruction%20set.pdf
 void Z80::ld()
 {
 	if (ir == 0x3E) { (*a) = memory->read8(pc); } // ld a
@@ -89,26 +88,17 @@ void Z80::inc8(uint8_t* reg)
 	update_f8(reg, rollover);
 }
 
-void Z80::inc16(uint16_t* reg)
-{
-	(*reg) += 1;
-}
+void Z80::inc16(uint16_t* reg) { (*reg) += 1; }
 
 inline void Z80::update_f8(uint8_t *reg8, bool rollover)
 {
 	uint8_t flags = 0x0;
 	if (rollover)
-	{
 		flags |= flag_bits.pv;
-	}
 	if ((*reg8) == 0)
-	{
 		flags |= flag_bits.zero;
-	}
 	if (((*reg8) & 0b0000) == 0)
-	{
 		flags |= flag_bits.halfcarry;
-	}
 	(*f) = flags;
 }
 
