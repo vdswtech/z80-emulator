@@ -279,7 +279,7 @@ int encode_number(std::string_view number_string)
  * @param number_string	The string containing the number to encode.
  * @return	The 8-bit number represented. Raise an exception if the number doesn't fit inside 8 bits.
  */
-uint8_t Assembler::encode_number_offset8(std::string_view number_string)
+uint8_t encode_number_offset8(std::string_view number_string)
 {
 	int encoded_number = encode_number(number_string);
 	if (encoded_number < INT8_MIN || encoded_number > INT8_MAX)
@@ -372,7 +372,15 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 			// inc (iy+d) 0xFD 0x34 dd
 			bytes.push_back(get_index_reg_byte(operand[2]));
 			bytes.push_back(0x34);
-			// TODO: implement finding and writing the offset
+			if (operand[3] == ')')
+			{
+				// inc (ix), inc (iy)
+				bytes.push_back(0x00);
+			}
+			else
+			{
+				bytes.push_back(encode_number_offset8(operand.substr(3)));
+			}
 		}
 		else if (uint8_t reg8_id = reg8_to_id(operand); reg8_id != 0xFF)
 		{
@@ -412,7 +420,15 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 			// dec (iy+d) 0xFD 0x35 dd
 			bytes.push_back(get_index_reg_byte(operand[2]));
 			bytes.push_back(0x35);
-			// TODO: implement finding and writing the offset
+			if (operand[3] == ')')
+			{
+				// dec (ix), dec (iy)
+				bytes.push_back(0x00);
+			}
+			else
+			{
+				bytes.push_back(encode_number_offset8(operand.substr(3)));
+			}
 		}
 		else if (uint8_t reg8_id = reg8_to_id(operand); reg8_id != 0xFF)
 		{

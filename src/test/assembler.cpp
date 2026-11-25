@@ -131,10 +131,13 @@ TEST_F(AssemblerTest, inc_ixiy)
 	InstructionAssembleTest("inc iy", { 0xFD, 0x23 });
 }
 
-// TEST_F(AssemblerTest, inc_ixiy_indirect)
-// {
-// 	// TODO: implement test for this
-// }
+TEST_F(AssemblerTest, inc_ixiy_indirect)
+{
+	InstructionAssembleTest("inc (ix)", { 0xDD, 0x34, 0x00 });
+	InstructionAssembleTest("inc (iy)", { 0xFD, 0x34, 0x00 });
+	InstructionAssembleTest("inc (ix+127)", { 0xDD, 0x34, 0x7F });
+	InstructionAssembleTest("inc (iy-128)", { 0xFD, 0x34, 0x80 });
+}
 
 TEST_F(AssemblerTest, dec_reg8)
 {
@@ -162,17 +165,11 @@ TEST_F(AssemblerTest, dec_ixiy)
 	InstructionAssembleTest("dec iy", { 0xFD, 0x2B });
 }
 
-// TEST_F(AssemblerTest, dec_ixiy_indirect)
-// {
-// 	// TODO: implement test for this
-// }
 
-TEST_F(AssemblerTest, temp_test)
+TEST_F(AssemblerTest, dec_ixiy_indirect)
 {
-	EXPECT_EQ(assembler.encode_number_offset8("0"), 0);
-	EXPECT_EQ(assembler.encode_number_offset8("127"), 0x7F);
-	EXPECT_EQ(assembler.encode_number_offset8("+127"), 0x7F);
-	EXPECT_EQ(assembler.encode_number_offset8("+7Fh"), 0x7F);
-	EXPECT_EQ(assembler.encode_number_offset8("-128"), 0x80);
-	EXPECT_EQ(assembler.encode_number_offset8("-1"), 0xFF);
+	InstructionAssembleTest("dec (ix)", { 0xDD, 0x35, 0x00 });
+	InstructionAssembleTest("dec (iy)", { 0xFD, 0x35, 0x00 });
+	InstructionAssembleTest("dec (ix+127)", { 0xDD, 0x35, 0x7F });
+	InstructionAssembleTest("dec (iy-128)", { 0xFD, 0x35, 0x80 });
 }
