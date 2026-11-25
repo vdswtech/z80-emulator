@@ -28,29 +28,6 @@ enum register_pos {
 
 struct FLAGS
 {
-	/*
-	 * CPU FLAGS
-	 * +-----+--------+-----------------+
-	 * | Bit | Symbol | Name            |
-	 * +-----+--------+-----------------+
-	 * |  8  |   S    | Sign            |
-	 * +-----+--------+-----------------+
-	 * |  7  |   Z    | Zero            |
-	 * +-----+--------+-----------------+
-	 * |  6  |   F5   | UNDOCUMENTED    |
-	 * +-----+--------+-----------------+
-	 * |  5  |   H    | Half Carry      |
-	 * +-----+--------+-----------------+
-	 * |  4  |   F3   | UNDOCUMENTED    |
-	 * +-----+--------+-----------------+
-	 * |  3  |   P/V  | Parity/Overflow |
-	 * +-----+--------+-----------------+
-	 * |  2  |   N    | Add/Subtract    |
-	 * +-----+--------+-----------------+
-	 * |  1  |   C    | Carry           |
-	 * +-----+--------+-----------------+
-	 */
-
 	uint8_t sign      = 0b10000000;
 	uint8_t zero      = 0b01000000;
 	uint8_t halfcarry = 0b00010000;
@@ -92,20 +69,21 @@ class Z80
 		uint16_t sp { 0xFFFF }; // Stack Pointer
 		uint16_t pc {};         // Program Counter
 
+		// execute functions
 		void execute();   // Execute instruction
 		void add();       // Execute any add calls
 		void increment(); // Execute any increment calls
 		void ld();		  // Execute ld calls
 
 		//  Execute helper scripts
-		bool f_c_is_set();                            // Check if Carry flag is set
-		bool f_n_is_set();                            // Check if Add/Subtract flag is set
-		bool f_pv_is_set();                           // Check if Parity/Overflow flag is set
-		bool f_h_is_set();                            // Check if Half Carry flag is set
-		bool f_z_is_set();                            // Check if Zero flag is set
-		bool f_s_is_set();                            // Check if Sign flag is set
-		void inc8(uint8_t* reg);                      // Increment a register
-		void inc16(uint16_t* reg);                    // Increment a register
+		bool f_c_is_set();                                   // Check if Carry flag is set
+		bool f_n_is_set();                                   // Check if Add/Subtract flag is set
+		bool f_pv_is_set();                                  // Check if Parity/Overflow flag is set
+		bool f_h_is_set();                                   // Check if Half Carry flag is set
+		bool f_z_is_set();                                   // Check if Zero flag is set
+		bool f_s_is_set();                                   // Check if Sign flag is set
+		void inc8(uint8_t* reg);                             // Increment a register
+		void inc16(uint16_t* reg);                           // Increment a register
 		inline void update_f8(uint8_t *reg8, bool rollover); // Update Flags register
 	public:
 		Z80(Memory* memory);
