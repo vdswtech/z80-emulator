@@ -213,16 +213,92 @@ bytes_t encode_0_operand_instruction(std::string_view instruction)
 	}
 }
 
+int encode_number(std::string_view number_string)
+{
+	int base {};
+	std::string_view number_part {number_string};
+	char start_char = number_string.front();
+	char end_char = number_string.back();
+	if (start_char == '%')
+	{
+		base = 2;
+		number_part.remove_prefix(1);
+	}
+	else if (end_char == 'b')
+	{
+		base = 2;
+		number_part.remove_suffix(1);
+	}
+	else if (start_char == 'o')
+	{
+		base = 8;
+		number_part.remove_prefix(1);
+	}
+	else if (end_char == 'o')
+	{
+		base = 8;
+		number_part.remove_suffix(1);
+	}
+	else if (start_char == '$')
+	{
+		base = 16;
+		number_part.remove_prefix(1);
+	}
+	else if (end_char == 'h')
+	{
+		base = 16;
+		number_part.remove_suffix(1);
+	}
+	else
+	{
+		base = 10;
+		// no characters to remove
+	}
+
+	return std::stoi(std::string(number_part), nullptr, base);
+}
+
 /**
- * Encode a string representing a number into an 8-bit number. Support binary, octal, hexadecimal, or decimal.
+ * Encode a string representing a number into a signed 8-bit number. Support binary, octal, hexadecimal, or decimal.
  * 1010000b = %1010000 = 120o = o120 = 80 = 50h = $50
  *
  * @param number_string	The string containing the number to encode.
  * @return	The 8-bit number represented. Raise an exception if the number doesn't fit inside 8 bits.
  */
-uint8_t encode_number8(std::string_view number_string)
+int8_t Assembler::encode_number8(std::string_view number_string)
 {
-	return 0;
+	int encoded_number = encode_number(number_string);
+	if (encoded_number < INT8_MIN || encoded_number > UINT8_MAX)
+	{
+		throw std::invalid_argument(
+			std::format("%s is outside the bounds of -128 to 127", number_string)
+		);
+	}
+	else
+	{
+		return static_cast<int8_t>(encoded_number);
+	}
+}
+
+/**
+ * Encode a string representing a number into an unsigned 16-bit number. Support binary, octal, hexadecimal, or decimal.
+ *
+ * @param number_string	The string containing the number to encode.
+ * @return	The 16-bit number represented. Raise an exception if the number doesn't fit inside 16 bits.
+ */
+uint16_t Assembler::encode_number16(std::string_view number_string)
+{
+	int encoded_number = encode_number(number_string);
+	if (encoded_number < 0 || encoded_number > UINT16_MAX)
+	{
+		throw std::invalid_argument(
+			std::format("%s is outside the bounds of 0 to 65535", number_string)
+		);
+	}
+	else
+	{
+		return static_cast<uint16_t>(encoded_number);
+	}
 }
 
 bytes_t Assembler::encode_instruction(std::string_view instruction)
