@@ -1,5 +1,6 @@
 #include "assembler.h"
 #include <format>
+#include <gtest/gtest.h>
 
 /**
  * Takes a bytes_t object and returns a string containing the hexadecimal representation of those bytes.
@@ -165,3 +166,13 @@ TEST_F(AssemblerTest, dec_ixiy)
 // {
 // 	// TODO: implement test for this
 // }
+
+TEST_F(AssemblerTest, temp_test)
+{
+	EXPECT_EQ(assembler.encode_number_offset8("0"), 0);
+	EXPECT_EQ(assembler.encode_number_offset8("127"), 0x7F);
+	EXPECT_EQ(assembler.encode_number_offset8("+127"), 0x7F);
+	EXPECT_EQ(assembler.encode_number_offset8("+7Fh"), 0x7F);
+	EXPECT_EQ(assembler.encode_number_offset8("-128"), 0x80);
+	EXPECT_EQ(assembler.encode_number_offset8("-1"), 0xFF);
+}

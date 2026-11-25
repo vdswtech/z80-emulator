@@ -274,6 +274,31 @@ int encode_number(std::string_view number_string)
 }
 
 /**
+ * Encode a string representing a number into a signed 8-bit number. Support binary, octal, hexadecimal, or decimal.
+ *
+ * @param number_string	The string containing the number to encode.
+ * @return	The 8-bit number represented. Raise an exception if the number doesn't fit inside 8 bits.
+ */
+uint8_t Assembler::encode_number_offset8(std::string_view number_string)
+{
+	int encoded_number = encode_number(number_string);
+	if (encoded_number < INT8_MIN || encoded_number > INT8_MAX)
+	{
+		throw std::invalid_argument(
+			std::format("%s is outside the bounds of -128 to 127", number_string)
+		);
+	}
+	else
+	{
+		union {
+			int i;
+			unsigned u;
+		} x = { encoded_number };
+		return static_cast<uint8_t>(x.u);
+	}
+}
+
+/**
  * Encode a string representing a number into an unsigned 8-bit number. Support binary, octal, hexadecimal, or decimal.
  * 1010000b = %1010000 = 120o = o120 = 80 = 50h = $50
  *
