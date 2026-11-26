@@ -26,22 +26,51 @@ enum register_pos {
 	r_l_prime  // 15
 };
 
+enum TABLE_NAMES
+{
+	main, // 0
+	ed,   // 1
+	cb    // 2
+};
+
 struct FLAGS
 {
-	uint8_t sign      = 0b10000000;
-	uint8_t zero      = 0b01000000;
-	uint8_t halfcarry = 0b00010000;
-	uint8_t pv        = 0b00000100;
-	uint8_t addsub    = 0b00000010;
-	uint8_t carry     = 0b00000001;
+	bool sign           = false;
+	bool zero           = false;
+	bool halfcarry      = false;
+	bool parityoverflow = false;
+	bool addsubtract    = false;
+	bool carry          = false;
+	uint8_t result();
+};
+
+struct INSTRUCTION
+{
+	uint8_t opcode[3];
+	uint8_t data[2];
+	FLAGS flags;
+	void set_sign();
+	void set_zero();
+	void set_halfcarry();
+	void set_parityoverflow();
+	void set_addsubtract();
+	void set_carry();
+	void unset_sign();
+	void unset_zero();
+	void unset_halfcarry();
+	void unset_parityoverflow();
+	void unset_addsubtract();
+	void unset_carry();
+	void set_flag(uint8_t* f);
+	uint8_t execute();
 };
 
 class Z80
 {
 	private:
-		FLAGS flag_bits;        // Hex values for switching bit in f register
-
-		// CPU state
+		INSTRUCTION main_instructions[16][16];
+		INSTRUCTION ed_instructions[16][16];
+		INSTRUCTION cb_instructions[16][16];
 		std::uint8_t general_purpose_registers[16]; // register memory location
 		Memory* memory;                             // System RAM
 		bool running;                               // Is system running?
@@ -68,32 +97,16 @@ class Z80
 		uint16_t iy { 0xFFFF }; // Index Y register
 		uint16_t sp { 0xFFFF }; // Stack Pointer
 		uint16_t pc {};         // Program Counter
-
-		// execute functions
-		void execute();   // Execute instruction
-		void add();       // Execute any add calls
-		void increment(); // Execute any increment calls
-		void ld();		  // Execute ld calls
-
-		//  Execute helper scripts
-		bool f_c_is_set();                                   // Check if Carry flag is set
-		bool f_n_is_set();                                   // Check if Add/Subtract flag is set
-		bool f_pv_is_set();                                  // Check if Parity/Overflow flag is set
-		bool f_h_is_set();                                   // Check if Half Carry flag is set
-		bool f_z_is_set();                                   // Check if Zero flag is set
-		bool f_s_is_set();                                   // Check if Sign flag is set
-		void inc8(uint8_t* reg);                             // Increment a register
-		void inc16(uint16_t* reg);                           // Increment a register
-		inline void update_f8(uint8_t *reg8, bool rollover); // Update Flags register
+		//INSTRUCTION* lookup_instruction(uint8_t opcode);
 	public:
 		Z80(Memory* memory);
 		~Z80();
-		void step();                                          // Step instruction
-		void reset();                                         // Reset variables
-		void reset_register_pointers();                       // Reset general purpose register pointers to default
-		bool run_status();                                    // Check if program is running when stepping through a program
-		uint8_t get_gp_register_state(register_pos position); // Get state of general purpose register
-		uint8_t get_ir();                                     // Get current loaded instruction
+		void define_instruction(TABLE_NAMES table, uint8_t* opcode, uint8_t opcode_count, uint8_t* data, uint8_t data_count);
+		void step();                                  // Step instruction
+		void reset();                                 // Reset variables
+		bool run_status();                            // Check if program is running when stepping through a program
+		uint8_t get_reg_state(register_pos position); // Get state of general purpose register
+		uint8_t get_ir();                             // Get current loaded instruction
 		uint16_t get_pc();
 		uint16_t get_sp();
 		uint16_t get_ix();

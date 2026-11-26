@@ -1,162 +1,51 @@
 #include "z80.h"
 #include "memory.h"
 
+uint8_t FLAGS::result()
+{
+	uint8_t flag = 0;
+	if (sign)
+		flag |= 0b10000000;
+	if (zero)
+		flag |= 0b01000000;
+	if (halfcarry)
+		flag |= 0b00010000;
+	if (parityoverflow)
+		flag |= 0b00000100;
+	if (addsubtract)
+		flag |= 0b00000010;
+	if (carry)
+		flag |= 0b00000001;
+	return flag;
+}
+
+void INSTRUCTION::set_sign() { flags.sign = true; }
+void INSTRUCTION::set_zero() { flags.zero= true; }
+void INSTRUCTION::set_halfcarry() { flags.halfcarry= true; }
+void INSTRUCTION::set_parityoverflow() { flags.parityoverflow= true; }
+void INSTRUCTION::set_addsubtract() { flags.addsubtract= true; }
+void INSTRUCTION::set_carry() { flags.carry= true; }
+void INSTRUCTION::unset_sign() { flags.sign = false; }
+void INSTRUCTION::unset_zero() { flags.zero= false; }
+void INSTRUCTION::unset_halfcarry() { flags.halfcarry= false; }
+void INSTRUCTION::unset_parityoverflow() { flags.parityoverflow= false; }
+void INSTRUCTION::unset_addsubtract() { flags.addsubtract= false; }
+void INSTRUCTION::unset_carry() { flags.carry= false; }
+
+void INSTRUCTION::set_flag(uint8_t* f) { (*f) = flags.result(); }
+
+uint8_t INSTRUCTION::execute()
+{
+	return 0;
+}
+
 Z80::Z80(Memory *memory)
 {
 	for (uint8_t i=0; i<16; i++)
 		general_purpose_registers[i] = 0xFF;
-
 	running = false;
 	this->memory = memory;
-	reset_register_pointers();
 }
 
 Z80::~Z80() { }
 
-void Z80::execute()
-{
-	// Load instruction and increment program counter
-	ir = memory->read8(pc);
-	pc++;
-
-	add();
-	increment();
-	ld();
-
-	if (ir == 0x0) { return; } // NOP
-
-	if (ir == 0x4C) // Halt
-	{
-		running = false;
-		return;
-	}
-}
-
-void Z80::add()
-{
-	bool rollover = ((*a) == 0xFF);
-	if (ir == 0x80) { (*a) = (*a) + (*b); }              // Add register B to register A
-	if (ir == 0x81) { (*a) = (*a) + (*c); }              // Add register C to register A
-	if (ir == 0x82) { (*a) = (*a) + (*d); }              // Add register D to register A
-	if (ir == 0x83) { (*a) = (*a) + (*e); }              // Add register E to register A
-	if (ir == 0x84) { (*a) = (*a) + (*h); }              // Add register H to register A
-	if (ir == 0x85) { (*a) = (*a) + (*l); }              // Add register L to register A
-	if (ir == 0x87) { (*a) = (*a) + (*a); }              // Add register A to register A
-	if (ir == 0xC6) { (*a) = (*a) + memory->read8(pc); } // Add value to register A
-	update_f8(a, rollover);
-}
-
-void Z80::increment()
-{
-	if (ir == 0x3C) { inc8(a); }                  // inc register A
-	if (ir == 0x4) { inc8(b); }                   // inc register B
-	if (ir == 0xC) { inc8(c); }                   // inc register C
-	if (ir == 0x14) { inc8(d); }                  // inc register D
-	if (ir == 0x1C) { inc8(e); }                  // inc register E
-	if (ir == 0x24) { inc8(h); }                  // inc register H
-	if (ir == 0x2C) { inc8(l); }                  // inc register L
-	if (ir == 0x3) { inc16(bc); }                 // inc register BC
-	if (ir == 0x13) { inc16(de); }                // inc register DE
-	if (ir == 0x23) { inc16(hl); }                // inc register HL
-	if (ir == 0x33) { inc16(&sp); }               // inc register SP
-	if (ir == 0xDD && ir+1 == 23) { inc16(&ix); } // inc register ix
-	if (ir == 0xFD && ir+1 == 23) { inc16(&iy); } // inc register iy
-}
-
-void Z80::ld()
-{
-	if (ir == 0x3E) { (*a) = memory->read8(pc); } // ld a
-	if (ir == 0x6) { (*b) = memory->read8(pc); }  // ld b
-	if (ir == 0xE) { (*c) = memory->read8(pc); }  // ld c
-	if (ir == 0x16) { (*d) = memory->read8(pc); } // ld d
-	if (ir == 0x1E) { (*e) = memory->read8(pc); } // ld e
-	if (ir == 0x26) { (*h) = memory->read8(pc); } // ld h
-	if (ir == 0x2E) { (*l) = memory->read8(pc); } // ld l
-}
-
-bool Z80::f_c_is_set() { return ((*f) & (1 << 0)) != 0; }
-bool Z80::f_n_is_set() { return ((*f) & (1 << 1)) != 0; }
-bool Z80::f_pv_is_set() { return ((*f) & (1 << 2)) != 0; }
-bool Z80::f_h_is_set() { return ((*f) & (1 << 4)) != 0; }
-bool Z80::f_z_is_set() { return ((*f) & (1 << 6)) != 0; }
-bool Z80::f_s_is_set() { return ((*f) & (1 << 7)) != 0; }
-
-void Z80::inc8(uint8_t* reg)
-{
-	bool rollover = ((*reg) == 0xFF);
-	(*reg) += 1;
-	update_f8(reg, rollover);
-}
-
-void Z80::inc16(uint16_t* reg) { (*reg) += 1; }
-
-inline void Z80::update_f8(uint8_t *reg8, bool rollover)
-{
-	uint8_t flags = 0x0;
-	if (rollover)
-		flags |= flag_bits.pv;
-	if ((*reg8) == 0)
-		flags |= flag_bits.zero;
-	if (((*reg8) & 0b0000) == 0)
-		flags |= flag_bits.halfcarry;
-	(*f) = flags;
-}
-
-void Z80::step()
-{
-	/*
-	 * If step is called and the program counter is set to zero, start the program
-	 * Run execute until running flag is set to false
-	 */
-	if (pc == 0)
-		running = true;
-	if (running)
-		execute();
-	return;
-}
-
-void Z80::reset()
-{
-	running = false;
-
-	// Special Purpose Registers
-	i = 0xFF;
-	r = 0xFF;
-	pc = 0;
-	sp = 0xFFFF;
-	ix = 0xFFFF;
-	iy = 0xFFFF;
-
-	// General Purpose Registers
-	for (uint8_t i = 0; i < 16; i++)
-		general_purpose_registers[i] = 0xFF;
-	reset_register_pointers();
-}
-
-void Z80::reset_register_pointers()
-{
-	a = (uint8_t*) &general_purpose_registers;
-	f = (uint8_t*) &general_purpose_registers + 1;
-	b = (uint8_t*) &general_purpose_registers + 2;
-	c = (uint8_t*) &general_purpose_registers + 3;
-	d = (uint8_t*) &general_purpose_registers + 4;
-	e = (uint8_t*) &general_purpose_registers + 5;
-	h = (uint8_t*) &general_purpose_registers + 6;
-	l = (uint8_t*) &general_purpose_registers + 7;
-	af = (uint16_t*) &general_purpose_registers;
-	bc = (uint16_t*) &general_purpose_registers + 2;
-	de = (uint16_t*) &general_purpose_registers + 4;
-	hl = (uint16_t*) &general_purpose_registers + 6;
-}
-
-bool Z80::run_status() { return running; }
-uint8_t Z80::get_gp_register_state(register_pos position) { return general_purpose_registers[position]; }
-uint8_t Z80::get_ir() { return ir; }
-uint16_t Z80::get_pc() { return pc; }
-uint16_t Z80::get_sp() { return sp; }
-uint16_t Z80::get_ix() { return ix; }
-uint16_t Z80::get_iy() { return iy; }
-uint16_t Z80::get_af() { return *af; }
-uint16_t Z80::get_bc() { return *bc; }
-uint16_t Z80::get_de() { return *de; }
-uint16_t Z80::get_hl() { return *hl; }
