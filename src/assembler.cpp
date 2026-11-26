@@ -326,7 +326,7 @@ uint8_t encode_number8(std::string_view number_string)
  * @param number_string	The string containing the number to encode.
  * @return	The 16-bit number represented. Raise an exception if the number doesn't fit inside 16 bits.
  */
-uint16_t encode_number16(std::string_view number_string)
+std::pair<uint8_t, uint8_t> encode_number16(std::string_view number_string)
 {
 	int encoded_number = encode_number(number_string);
 	if (encoded_number < 0 || encoded_number > UINT16_MAX)
@@ -337,7 +337,7 @@ uint16_t encode_number16(std::string_view number_string)
 	}
 	else
 	{
-		return static_cast<uint16_t>(encoded_number);
+		return std::pair(encoded_number & 0xFF, encoded_number >> 8);
 	}
 }
 
