@@ -341,6 +341,22 @@ std::pair<uint8_t, uint8_t> encode_number16(std::string_view number_string)
 	}
 }
 
+std::unordered_map<std::string_view, std::vector<uint8_t>> A_OPERAND1_TO_BYTES =
+{
+	{"(bc)", {0x0A}},
+	{"(de)", {0x1A}},
+	{"i", {0xED, 0x57}},
+	{"r", {0xED, 0x5F}},
+};
+
+std::unordered_map<std::string_view, std::vector<uint8_t>> A_OPERAND2_TO_BYTES =
+{
+	{"(bc)", {0x02}},
+	{"(de)", {0x12}},
+	{"i", {0xED, 0x47}},
+	{"r", {0xED, 0x4F}},
+};
+
 bytes_t Assembler::encode_instruction(std::string_view instruction)
 {
 	bytes_t bytes = {};
@@ -353,33 +369,107 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 	}
 	else if (mnemonic == "ld")
 	{
-		 // ld r, r' 0b 10rrrRRR
-		 // ld r, n 0b 00rrr110 nnnnnnnn
-		 // ld ss, nn 0b 00ss0001 nnnnnnnn nnnnnnnn
-		 // ld (nn), ss 0xED 01ss1011 nnnnnnnn nnnnnnnn
-		 // ld ss, (nn) 0xED 01ss0011 nnnnnnnn nnnnnnnn
-		 // ld (nn), hl 0x22 nnnnnnnn nnnnnnnn
-		 // ld hl, (nn) 0x2A nnnnnnnn nnnnnnnn
-		 // ld (nn), a  0x32 nnnnnnnn nnnnnnnn
-		 // ld a, (nn)  0x3A nnnnnnnn nnnnnnnn
-		 // ld sp, hl  0xF9
-		 //
-		 // ld (bc), a  0x02
-		 // ld a, (bc)  0x0A
-		 // ld (de), a  0x12
-		 // ld a, (de)  0x1A
-		 // ld i, a 0xED 0x47
-		 // ld r, a 0xED 0x4F
-		 // ld a, i 0xED 0x57
-		 // ld a, r 0xED 0x5F
-		 //
-		 // ld r, (ii+d) 0xDD/0xFD 10rrr110 dddddddd
-		 // ld (ii+d), r 0xDD/0xFD 10110rrr dddddddd
-		 // ld (ii+d), n 0xDD/0xFD 0x36 dddddddd nnnnnnnn
-		 // ld ii, nn 0xDD/0xFD 0x21 nnnnnnnn nnnnnnnn
-		 // ld (nn), ii 0xDD/0xFD 0x22 nnnnnnnn nnnnnnnn
-		 // ld ii, (nn) 0xDD/0xFD 0x2A nnnnnnnn nnnnnnnn
-		 // ld sp, ii 0xDD/0xFD 0xF9
+		// ld ss, nn 0b 00ss0001 nnnnnnnn nnnnnnnn
+		// ld (nn), ss 0xED 01ss1011 nnnnnnnn nnnnnnnn
+		// ld ss, (nn) 0xED 01ss0011 nnnnnnnn nnnnnnnn
+		// ld (nn), a  0x32 nnnnnnnn nnnnnnnn
+		// ld a, (nn)  0x3A nnnnnnnn nnnnnnnn
+		//
+		//
+		// ld r, (ii+d) 0xDD/0xFD 10rrr110 dddddddd
+		// ld (ii+d), r 0xDD/0xFD 10110rrr dddddddd
+		// ld (ii+d), n 0xDD/0xFD 0x36 dddddddd nnnnnnnn
+		// ld ii, nn 0xDD/0xFD 0x21 nnnnnnnn nnnnnnnn
+		// ld (nn), ii 0xDD/0xFD 0x22 nnnnnnnn nnnnnnnn
+		// ld ii, (nn) 0xDD/0xFD 0x2A nnnnnnnn nnnnnnnn
+		// ld sp, ii 0xDD/0xFD 0xF9
+		assert_operands_is_length(operands, 2);
+		std::string_view operand1 = operands[0];
+		std::string_view operand2 = operands[1];
+		
+		if (operand1 == "hl")
+		{
+			if (operand2.front() == '(')
+			{
+				// ld hl, (nn) 0x2A nnnnnnnn nnnnnnnn
+				bytes.push_back(0x2A);
+				operand2.remove_prefix(1);
+				auto [lo, hi] = encode_number16(operand2);
+				bytes.push_back(lo);
+				bytes.push_back(hi);
+			}
+			else
+			{
+				throw std::invalid_argument(
+					std::format("Unknown instruction ld %s, %s (expected ld hl, (nn))", operand1, operand2)
+				);
+			}
+		}
+		else if (operand2 == "hl")
+		{
+			if (operand1 == "sp")
+			{
+				// ld sp, hl  0xF9
+				bytes.push_back(0xF9);
+			}
+			else if (operand1.front() == '(')
+			{
+				// ld (nn), hl 0x22 nnnnnnnn nnnnnnnn
+				bytes.push_back(0x22);
+				operand1.remove_prefix(1);
+				auto [lo, hi] = encode_number16(operand1);
+				bytes.push_back(lo);
+				bytes.push_back(hi);
+			}
+			else
+			{
+				throw std::invalid_argument(
+					std::format("Unknown instruction ld %s, %s (expected ld (nn), hl)", operand1, operand2)
+				);
+			}
+		}
+		//deal with special "a" ld's
+		if (operand1 == "a")
+		{
+			// ld a, (bc)  0x0A
+			// ld a, (de)  0x1A
+			// ld a, i 0xED 0x57
+			// ld a, r 0xED 0x5F
+			auto bytes_iterator = A_OPERAND1_TO_BYTES.find(operand2);
+			if (bytes_iterator != A_OPERAND1_TO_BYTES.end())
+			{
+				return bytes_iterator->second;
+			}
+		}
+		else if (operand2 == "a")
+		{
+			// ld (bc), a  0x02
+			// ld (de), a  0x12
+			// ld i, a 0xED 0x47
+			// ld r, a 0xED 0x4F
+			auto bytes_iterator = A_OPERAND2_TO_BYTES.find(operand1);
+			if (bytes_iterator != A_OPERAND2_TO_BYTES.end())
+			{
+				return bytes_iterator->second;
+			}
+		}
+
+		uint8_t op1_reg8_id = reg8_to_id(operand1);
+		uint8_t op2_reg8_id = reg8_to_id(operand2);
+		if (op1_reg8_id != 0xFF)
+		{
+			if (op2_reg8_id != 0xFF)
+			{
+				// ld r, r' 0b 10rrrRRR
+				bytes.push_back(0b10000000 | (op1_reg8_id << 3) | op2_reg8_id);
+			}
+			else
+			{
+				// ld r, n 0b 00rrr110 nnnnnnnn
+				bytes.push_back(0b00000110 | (op1_reg8_id << 3));
+				bytes.push_back(encode_number8(operand2));
+			}
+		}
 	}
 	else if (mnemonic == "inc")
 	{
