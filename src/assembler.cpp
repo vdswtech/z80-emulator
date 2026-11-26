@@ -341,7 +341,7 @@ std::pair<uint8_t, uint8_t> encode_number16(std::string_view number_string)
 	}
 }
 
-std::unordered_map<std::string_view, std::vector<uint8_t>> A_OPERAND1_TO_BYTES =
+std::unordered_map<std::string_view, bytes_t> A_OPERAND1_TO_BYTES =
 {
 	{"(bc)", {0x0A}},
 	{"(de)", {0x1A}},
@@ -349,7 +349,7 @@ std::unordered_map<std::string_view, std::vector<uint8_t>> A_OPERAND1_TO_BYTES =
 	{"r", {0xED, 0x5F}},
 };
 
-std::unordered_map<std::string_view, std::vector<uint8_t>> A_OPERAND2_TO_BYTES =
+std::unordered_map<std::string_view, bytes_t> A_OPERAND2_TO_BYTES =
 {
 	{"(bc)", {0x02}},
 	{"(de)", {0x12}},
