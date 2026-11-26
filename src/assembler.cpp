@@ -353,28 +353,33 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 	}
 	else if (mnemonic == "ld")
 	{
-		/*
-		 * *ld r, r' 0b 10rrrRRR
-		 * *ld r, n 0b 00rrr110 nnnnnnnn
-		 * ld ss, nn 0b 00ss0001 nnnnnnnn nnnnnnnn
-		 * ld (bc), a  0x02
-		 * ld a, (bc)  0x0A
-		 * ld (de), a  0x12
-		 * ld a, (de)  0x1A
-		 * *ld (nn), hl 0x22 nnnnnnnn nnnnnnnn
-		 * *ld hl, (nn) 0x2A nnnnnnnn nnnnnnnn
-		 * ld (nn), a  0x32 nnnnnnnn nnnnnnnn
-		 * ld a, (nn)  0x3A nnnnnnnn nnnnnnnn
-		 * *ld sp, hl  0xF9
-		 * ld (nn), ss 0xED 01ss1011 nnnnnnnn nnnnnnnn
-		 * ld ss, (nn) 0xED 01ss0011 nnnnnnnn nnnnnnnn
-		 * ld i, a 0xED 0x47
-		 * ld r, a 0xED 0x4F
-		 * ld a, i 0xED 0x57
-		 * ld a, r 0xED 0x5F
-		 *
-		 * *interacts with ix/iy
-		 */
+		 // ld r, r' 0b 10rrrRRR
+		 // ld r, n 0b 00rrr110 nnnnnnnn
+		 // ld ss, nn 0b 00ss0001 nnnnnnnn nnnnnnnn
+		 // ld (nn), ss 0xED 01ss1011 nnnnnnnn nnnnnnnn
+		 // ld ss, (nn) 0xED 01ss0011 nnnnnnnn nnnnnnnn
+		 // ld (nn), hl 0x22 nnnnnnnn nnnnnnnn
+		 // ld hl, (nn) 0x2A nnnnnnnn nnnnnnnn
+		 // ld (nn), a  0x32 nnnnnnnn nnnnnnnn
+		 // ld a, (nn)  0x3A nnnnnnnn nnnnnnnn
+		 // ld sp, hl  0xF9
+		 //
+		 // ld (bc), a  0x02
+		 // ld a, (bc)  0x0A
+		 // ld (de), a  0x12
+		 // ld a, (de)  0x1A
+		 // ld i, a 0xED 0x47
+		 // ld r, a 0xED 0x4F
+		 // ld a, i 0xED 0x57
+		 // ld a, r 0xED 0x5F
+		 //
+		 // ld r, (ii+d) 0xDD/0xFD 10rrr110 dddddddd
+		 // ld (ii+d), r 0xDD/0xFD 10110rrr dddddddd
+		 // ld (ii+d), n 0xDD/0xFD 0x36 dddddddd nnnnnnnn
+		 // ld ii, nn 0xDD/0xFD 0x21 nnnnnnnn nnnnnnnn
+		 // ld (nn), ii 0xDD/0xFD 0x22 nnnnnnnn nnnnnnnn
+		 // ld ii, (nn) 0xDD/0xFD 0x2A nnnnnnnn nnnnnnnn
+		 // ld sp, ii 0xDD/0xFD 0xF9
 	}
 	else if (mnemonic == "inc")
 	{
