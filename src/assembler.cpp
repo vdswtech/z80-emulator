@@ -341,6 +341,21 @@ std::pair<uint8_t, uint8_t> encode_number16(std::string_view number_string)
 	}
 }
 
+void push_back16(bytes_t& bytes, std::string_view number_string16)
+{
+	auto [lo, hi] = encode_number16(number_string16);
+	bytes.push_back(lo);
+	bytes.push_back(hi);
+
+}
+
+void push_back16_indirect(bytes_t& bytes, std::string_view number_string16)
+{
+	number_string16.remove_prefix(1);
+	number_string16.remove_suffix(1);
+	push_back16(bytes, number_string16);
+}
+
 std::unordered_map<std::string_view, bytes_t> A_OPERAND1_TO_BYTES =
 {
 	{"(bc)", {0x0A}},
@@ -393,11 +408,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 			{
 				// ld hl, (nn) 0x2A nnnnnnnn nnnnnnnn
 				bytes.push_back(0x2A);
-				operand2.remove_prefix(1);
-				operand2.remove_suffix(1);
-				auto [lo, hi] = encode_number16(operand2);
-				bytes.push_back(lo);
-				bytes.push_back(hi);
+				push_back16_indirect(bytes, operand2);
 			}
 			else
 			{
@@ -417,11 +428,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 			{
 				// ld (nn), hl 0x22 nnnnnnnn nnnnnnnn
 				bytes.push_back(0x22);
-				operand1.remove_prefix(1);
-				operand1.remove_suffix(1);
-				auto [lo, hi] = encode_number16(operand1);
-				bytes.push_back(lo);
-				bytes.push_back(hi);
+				push_back16_indirect(bytes, operand1);
 			}
 			else
 			{
