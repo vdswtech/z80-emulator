@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-	Z80 z80;
 	Memory memory;
+	Z80 z80(&memory);
 	return 0;
 }

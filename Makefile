@@ -4,7 +4,7 @@ TEST_CFLAGS=-g
 LDFLAGS=
 TEST_LDFLAGS=-lgtest -lgtest_main -lpthread
 
-emulator: object/memory.o object/assembler.o object/z80.o object/main.o
+emulator: object/memory.o object/assembler.o object/z80_commands.o object/z80.o object/main.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 test_emulator: object/test_memory_def.o object/test_memory.o object/test_assembler_def.o object/test_assembler.o object/test_z80_def.o object/test_z80.o object/test_main.o
@@ -20,6 +20,9 @@ object/z80.o: src/z80.cpp
 	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
 
 object/memory.o: src/memory.cpp
+	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
+
+object/z80_commands.o: src/z80_commands.cpp
 	$(CC) $(CFLAGS) -c $^ $(LDFLAGS) -o $@
 
 object/test_main.o: src/test/main.cpp

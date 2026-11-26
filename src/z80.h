@@ -5,33 +5,7 @@
 #include <string>
 
 #include "memory.h"
-
-// Register location in register array
-enum register_pos {
-	r_a,       // 0
-	r_f,       // 1
-	r_b,       // 2
-	r_c,       // 3
-	r_d,       // 4
-	r_e,       // 5
-	r_h,       // 6
-	r_l,       // 7
-	r_a_prime, // 8
-	r_f_prime, // 9
-	r_b_prime, // 10
-	r_c_prime, // 11
-	r_d_prime, // 12
-	r_e_prime, // 13
-	r_h_prime, // 14
-	r_l_prime  // 15
-};
-
-enum TABLE_NAMES
-{
-	main, // 0
-	ed,   // 1
-	cb    // 2
-};
+#include "z80_commands.h"
 
 struct FLAGS
 {
@@ -41,28 +15,23 @@ struct FLAGS
 	bool parityoverflow = false;
 	bool addsubtract    = false;
 	bool carry          = false;
-	uint8_t result();
-};
-
-struct INSTRUCTION
-{
-	uint8_t opcode[3];
-	uint8_t data[2];
-	FLAGS flags;
 	void set_sign();
 	void set_zero();
 	void set_halfcarry();
 	void set_parityoverflow();
 	void set_addsubtract();
 	void set_carry();
-	void unset_sign();
-	void unset_zero();
-	void unset_halfcarry();
-	void unset_parityoverflow();
-	void unset_addsubtract();
-	void unset_carry();
-	void set_flag(uint8_t* f);
-	uint8_t execute();
+	uint8_t result();
+};
+
+struct INSTRUCTION
+{
+	uint8_t opcode[3];         // Store up to three bytes of opcodes.
+	uint8_t data[2];           // Store up to two bytes of data
+	uint8_t pc_increment;      // How far do we advacne the program counter for this instruction
+	FLAGS flags;               // Keep track of flags state
+	void set_flag(uint8_t* f); // Copy flag status to f register
+	uint8_t execute();         // Execute a command and return how far to advance the program counter
 };
 
 class Z80
@@ -101,7 +70,21 @@ class Z80
 	public:
 		Z80(Memory* memory);
 		~Z80();
-		void define_instruction(TABLE_NAMES table, uint8_t* opcode, uint8_t opcode_count, uint8_t* data, uint8_t data_count);
+		void set_instruction(std::string table,
+				             uint8_t row,
+							 uint8_t col,
+							 uint8_t* opcode,
+							 uint8_t opcode_count,
+							 uint8_t* data,
+							 uint8_t data_count,
+							 FLAGS flags);
+		void set_instruction(std::string  table,
+				             uint8_t table_opcode,
+							 uint8_t* opcode,
+							 uint8_t opcode_count,
+							 uint8_t* data,
+							 uint8_t data_count,
+							 FLAGS flags);
 		void step();                                  // Step instruction
 		void reset();                                 // Reset variables
 		bool run_status();                            // Check if program is running when stepping through a program
