@@ -384,23 +384,22 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 	}
 	else if (mnemonic == "ld")
 	{
-		// ld ss, nn 0b 00ss0001 nnnnnnnn nnnnnnnn
-		// ld (nn), ss 0xED 01ss1011 nnnnnnnn nnnnnnnn
-		// ld ss, (nn) 0xED 01ss0011 nnnnnnnn nnnnnnnn
-		// ld (nn), a  0x32 nnnnnnnn nnnnnnnn
-		// ld a, (nn)  0x3A nnnnnnnn nnnnnnnn
-		//
-		//
+		assert_operands_is_length(operands, 2);
+		std::string_view operand1 = operands[0];
+		std::string_view operand2 = operands[1];
+
 		// ld r, (ii+d) 0xDD/0xFD 10rrr110 dddddddd
 		// ld (ii+d), r 0xDD/0xFD 10110rrr dddddddd
 		// ld (ii+d), n 0xDD/0xFD 0x36 dddddddd nnnnnnnn
+
 		// ld ii, nn 0xDD/0xFD 0x21 nnnnnnnn nnnnnnnn
 		// ld (nn), ii 0xDD/0xFD 0x22 nnnnnnnn nnnnnnnn
 		// ld ii, (nn) 0xDD/0xFD 0x2A nnnnnnnn nnnnnnnn
 		// ld sp, ii 0xDD/0xFD 0xF9
-		assert_operands_is_length(operands, 2);
-		std::string_view operand1 = operands[0];
-		std::string_view operand2 = operands[1];
+
+		// ld ss, nn 0b 00ss0001 nnnnnnnn nnnnnnnn
+		// ld (nn), ss 0xED 01ss1011 nnnnnnnn nnnnnnnn
+		// ld ss, (nn) 0xED 01ss0011 nnnnnnnn nnnnnnnn
 
 		if (operand1 == "hl")
 		{
@@ -444,6 +443,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 			// ld a, (de)  0x1A
 			// ld a, i 0xED 0x57
 			// ld a, r 0xED 0x5F
+			// ld a, (nn)  0x3A nnnnnnnn nnnnnnnn
 			auto bytes_iterator = A_OPERAND1_TO_BYTES.find(operand2);
 			if (bytes_iterator != A_OPERAND1_TO_BYTES.end())
 			{
@@ -456,6 +456,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 			// ld (de), a  0x12
 			// ld i, a 0xED 0x47
 			// ld r, a 0xED 0x4F
+			// ld (nn), a  0x32 nnnnnnnn nnnnnnnn
 			auto bytes_iterator = A_OPERAND2_TO_BYTES.find(operand1);
 			if (bytes_iterator != A_OPERAND2_TO_BYTES.end())
 			{

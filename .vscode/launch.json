@@ -1,0 +1,22 @@
+{
+    "configurations": [
+    {
+        "name": "C/C++ Debug: Launch with GDB",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/test_emulator",
+        "args": [],
+        "stopAtEntry": true,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ]
+    }
+    ]
+}
