@@ -351,6 +351,31 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 	{
 		return encode_0_operand_instruction(instruction);
 	}
+	else if (mnemonic == "ld")
+	{
+		/*
+		 * *ld r, r' 0b 10rrrRRR
+		 * *ld r, n 0b 00rrr110 nnnnnnnn
+		 * ld ss, nn 0b 00ss0001 nnnnnnnn nnnnnnnn
+		 * ld (bc), a  0x02
+		 * ld a, (bc)  0x0A
+		 * ld (de), a  0x12
+		 * ld a, (de)  0x1A
+		 * *ld (nn), hl 0x22 nnnnnnnn nnnnnnnn
+		 * *ld hl, (nn) 0x2A nnnnnnnn nnnnnnnn
+		 * ld (nn), a  0x32 nnnnnnnn nnnnnnnn
+		 * ld a, (nn)  0x3A nnnnnnnn nnnnnnnn
+		 * *ld sp, hl  0xF9
+		 * ld (nn), ss 0xED 01ss1011 nnnnnnnn nnnnnnnn
+		 * ld ss, (nn) 0xED 01ss0011 nnnnnnnn nnnnnnnn
+		 * ld i, a 0xED 0x47
+		 * ld r, a 0xED 0x4F
+		 * ld a, i 0xED 0x57
+		 * ld a, r 0xED 0x5F
+		 *
+		 * *interacts with ix/iy
+		 */
+	}
 	else if (mnemonic == "inc")
 	{
 		assert_operands_is_length(operands, 1);
