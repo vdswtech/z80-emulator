@@ -386,7 +386,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 		assert_operands_is_length(operands, 2);
 		std::string_view operand1 = operands[0];
 		std::string_view operand2 = operands[1];
-		
+
 		if (operand1 == "hl")
 		{
 			if (operand2.front() == '(')
@@ -394,6 +394,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 				// ld hl, (nn) 0x2A nnnnnnnn nnnnnnnn
 				bytes.push_back(0x2A);
 				operand2.remove_prefix(1);
+				operand2.remove_suffix(1);
 				auto [lo, hi] = encode_number16(operand2);
 				bytes.push_back(lo);
 				bytes.push_back(hi);
@@ -417,6 +418,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 				// ld (nn), hl 0x22 nnnnnnnn nnnnnnnn
 				bytes.push_back(0x22);
 				operand1.remove_prefix(1);
+				operand1.remove_suffix(1);
 				auto [lo, hi] = encode_number16(operand1);
 				bytes.push_back(lo);
 				bytes.push_back(hi);
@@ -429,7 +431,7 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 			}
 		}
 		//deal with special "a" ld's
-		if (operand1 == "a")
+		else if (operand1 == "a")
 		{
 			// ld a, (bc)  0x0A
 			// ld a, (de)  0x1A
@@ -460,8 +462,8 @@ bytes_t Assembler::encode_instruction(std::string_view instruction)
 		{
 			if (op2_reg8_id != 0xFF)
 			{
-				// ld r, r' 0b 10rrrRRR
-				bytes.push_back(0b10000000 | (op1_reg8_id << 3) | op2_reg8_id);
+				// ld r, r' 0b 01rrrRRR
+				bytes.push_back(0b01000000 | (op1_reg8_id << 3) | op2_reg8_id);
 			}
 			else
 			{

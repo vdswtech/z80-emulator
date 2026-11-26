@@ -173,3 +173,102 @@ TEST_F(AssemblerTest, dec_ixiy_indirect)
 	InstructionAssembleTest("dec (ix+127)", { 0xDD, 0x35, 0x7F });
 	InstructionAssembleTest("dec (iy-128)", { 0xFD, 0x35, 0x80 });
 }
+
+TEST_F(AssemblerTest, ld_hl)
+{
+	InstructionAssembleTest("ld sp, hl", { 0xF9 });
+	InstructionAssembleTest("ld (1234h), hl", { 0x22, 0x34, 0x12 });
+	InstructionAssembleTest("ld hl, (1234h)", { 0x2A, 0x34, 0x12 });
+}
+
+TEST_F(AssemblerTest, ld_a_special)
+{
+	InstructionAssembleTest("ld a, (bc)", { 0x0A });
+	InstructionAssembleTest("ld a, (de)", { 0x1A });
+	InstructionAssembleTest("ld a, i", { 0xED, 0x57 });
+	InstructionAssembleTest("ld a, r", { 0xED, 0x5F });
+	InstructionAssembleTest("ld (bc), a", { 0x02 });
+	InstructionAssembleTest("ld (de), a", { 0x12 });
+	InstructionAssembleTest("ld i, a", { 0xED, 0x47 });
+	InstructionAssembleTest("ld r, a", { 0xED, 0x4F });
+}
+
+TEST_F(AssemblerTest, ld_r_rprime)
+{
+	InstructionAssembleTest("ld b, b",     { 0x40 });
+	InstructionAssembleTest("ld b, c",     { 0x41 });
+	InstructionAssembleTest("ld b, d",     { 0x42 });
+	InstructionAssembleTest("ld b, e",     { 0x43 });
+	InstructionAssembleTest("ld b, h",     { 0x44 });
+	InstructionAssembleTest("ld b, l",     { 0x45 });
+	InstructionAssembleTest("ld b, (hl)",  { 0x46 });
+	InstructionAssembleTest("ld b, a",     { 0x47 });
+	InstructionAssembleTest("ld c, b",     { 0x48 });
+	InstructionAssembleTest("ld c, c",     { 0x49 });
+	InstructionAssembleTest("ld c, d",     { 0x4A });
+	InstructionAssembleTest("ld c, e",     { 0x4B });
+	InstructionAssembleTest("ld c, h",     { 0x4C });
+	InstructionAssembleTest("ld c, l",     { 0x4D });
+	InstructionAssembleTest("ld c, (hl)",  { 0x4E });
+	InstructionAssembleTest("ld c, a",     { 0x4F });
+	InstructionAssembleTest("ld d, b",     { 0x50 });
+	InstructionAssembleTest("ld d, c",     { 0x51 });
+	InstructionAssembleTest("ld d, d",     { 0x52 });
+	InstructionAssembleTest("ld d, e",     { 0x53 });
+	InstructionAssembleTest("ld d, h",     { 0x54 });
+	InstructionAssembleTest("ld d, l",     { 0x55 });
+	InstructionAssembleTest("ld d, (hl)",  { 0x56 });
+	InstructionAssembleTest("ld d, a",     { 0x57 });
+	InstructionAssembleTest("ld e, b",     { 0x58 });
+	InstructionAssembleTest("ld e, c",     { 0x59 });
+	InstructionAssembleTest("ld e, d",     { 0x5A });
+	InstructionAssembleTest("ld e, e",     { 0x5B });
+	InstructionAssembleTest("ld e, h",     { 0x5C });
+	InstructionAssembleTest("ld e, l",     { 0x5D });
+	InstructionAssembleTest("ld e, (hl)",  { 0x5E });
+	InstructionAssembleTest("ld e, a",     { 0x5F });
+	InstructionAssembleTest("ld h, b",     { 0x60 });
+	InstructionAssembleTest("ld h, c",     { 0x61 });
+	InstructionAssembleTest("ld h, d",     { 0x62 });
+	InstructionAssembleTest("ld h, e",     { 0x63 });
+	InstructionAssembleTest("ld h, h",     { 0x64 });
+	InstructionAssembleTest("ld h, l",     { 0x65 });
+	InstructionAssembleTest("ld h, (hl)",  { 0x66 });
+	InstructionAssembleTest("ld h, a",     { 0x67 });
+	InstructionAssembleTest("ld l, b",     { 0x68 });
+	InstructionAssembleTest("ld l, c",     { 0x69 });
+	InstructionAssembleTest("ld l, d",     { 0x6A });
+	InstructionAssembleTest("ld l, e",     { 0x6B });
+	InstructionAssembleTest("ld l, h",     { 0x6C });
+	InstructionAssembleTest("ld l, l",     { 0x6D });
+	InstructionAssembleTest("ld l, (hl)",  { 0x6E });
+	InstructionAssembleTest("ld l, a",     { 0x6F });
+	InstructionAssembleTest("ld (hl), b",  { 0x70 });
+	InstructionAssembleTest("ld (hl), c",  { 0x71 });
+	InstructionAssembleTest("ld (hl), d",  { 0x72 });
+	InstructionAssembleTest("ld (hl), e",  { 0x73 });
+	InstructionAssembleTest("ld (hl), h",  { 0x74 });
+	InstructionAssembleTest("ld (hl), l",  { 0x75 });
+	// InstructionAssembleTest("halt",     { 0x76 });
+	InstructionAssembleTest("ld (hl), a",  { 0x77 });
+	InstructionAssembleTest("ld a, b",     { 0x78 });
+	InstructionAssembleTest("ld a, c",     { 0x79 });
+	InstructionAssembleTest("ld a, d",     { 0x7A });
+	InstructionAssembleTest("ld a, e",     { 0x7B });
+	InstructionAssembleTest("ld a, h",     { 0x7C });
+	InstructionAssembleTest("ld a, l",     { 0x7D });
+	InstructionAssembleTest("ld a, (hl)",  { 0x7E });
+	InstructionAssembleTest("ld a, a",     { 0x7F });
+}
+
+TEST_F(AssemblerTest, ld_r_n)
+{
+	InstructionAssembleTest("ld b, 12h", { 0x06, 0x12 });
+	InstructionAssembleTest("ld c, 12h", { 0x0E, 0x12 });
+	InstructionAssembleTest("ld d, 12h", { 0x16, 0x12 });
+	InstructionAssembleTest("ld e, 12h", { 0x1E, 0x12 });
+	InstructionAssembleTest("ld h, 12h", { 0x26, 0x12 });
+	InstructionAssembleTest("ld l, 12h", { 0x2E, 0x12 });
+	InstructionAssembleTest("ld (hl), 12h", { 0x36, 0x12 });
+	InstructionAssembleTest("ld a, 12h", { 0x3E, 0x12 });
+}
