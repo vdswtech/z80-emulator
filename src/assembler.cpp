@@ -284,7 +284,7 @@ uint8_t encode_number_offset8(std::string_view number_string)
 	int encoded_number = encode_number(number_string);
 	if (encoded_number < INT8_MIN || encoded_number > INT8_MAX)
 	{
-		throw std::invalid_argument(
+		throw std::out_of_range(
 			std::format("%s is outside the bounds of -128 to 127", number_string)
 		);
 	}
@@ -310,7 +310,7 @@ uint8_t encode_number8(std::string_view number_string)
 	int encoded_number = encode_number(number_string);
 	if (encoded_number < 0 || encoded_number > UINT8_MAX)
 	{
-		throw std::invalid_argument(
+		throw std::out_of_range(
 			std::format("%s is outside the bounds of 0 to 255", number_string)
 		);
 	}
@@ -331,7 +331,7 @@ uint16_t encode_number16(std::string_view number_string)
 	int encoded_number = encode_number(number_string);
 	if (encoded_number < 0 || encoded_number > UINT16_MAX)
 	{
-		throw std::invalid_argument(
+		throw std::out_of_range(
 			std::format("%s is outside the bounds of 0 to 65535", number_string)
 		);
 	}
